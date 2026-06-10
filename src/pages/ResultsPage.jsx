@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { toPng } from 'html-to-image'
+import confetti from 'canvas-confetti'
 import { Header } from '../components/layout/Header'
 import { getProfile, ARCHETYPES } from '../data/profiles'
 import { getProfileFromScores } from '../data/quiz'
@@ -265,6 +266,32 @@ export default function ResultsPage() {
       setLoadingAnalysis(false)
     })
   }, [profileId])
+
+  // ── Confetti à la révélation du profil (pas en mode admin) ───────────────
+  useEffect(() => {
+    if (!profile || state?.fromAdmin) return
+
+    const arc = ARCHETYPES[profile.major]
+    const colors = [arc.color, arc.textColor, '#00d4f5', '#ffffff', '#fbbf24']
+
+    function fire(ratio, opts) {
+      confetti({
+        particleCount: Math.floor(90 * ratio),
+        colors,
+        origin: { x: 0.5, y: 0.45 },
+        ...opts,
+      })
+    }
+
+    const t = setTimeout(() => {
+      fire(0.3,  { spread: 30,  startVelocity: 60 })
+      fire(0.25, { spread: 70 })
+      fire(0.35, { spread: 110, decay: 0.91, scalar: 0.8 })
+      fire(0.1,  { spread: 130, startVelocity: 28, decay: 0.92, scalar: 1.2 })
+    }, 650)
+
+    return () => clearTimeout(t)
+  }, [profileId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!state?.scores || !profile) return null
 

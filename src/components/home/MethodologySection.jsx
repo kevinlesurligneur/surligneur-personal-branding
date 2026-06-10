@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { ARCHETYPES } from '../../data/profiles'
+import { HighlightWord } from '../common/HighlightWord'
 
 const archetypeItems = ['expert', 'grande-gueule', 'leader', 'explorateur']
 
@@ -85,7 +86,8 @@ export function MethodologySection() {
                   4 ans d'expérience terrain avec les plus grandes figures publiques du business
                 </p>
                 <p className="text-text-muted text-sm leading-relaxed">
-                  Kelly Massol, Blaise Matuidi, Yasmine Douadi… L'agence Le Surligneur a affûté cette méthode
+                  <HighlightWord color="rgba(253,224,71,0.35)" delay={0.1}>Kelly Massol, Blaise Matuidi, Yasmine Douadi…</HighlightWord>{' '}
+                  L'agence Le Surligneur a affûté cette méthode
                   au contact des meilleurs, pour la rendre accessible à tous les créateurs de contenu.
                 </p>
               </div>
@@ -215,11 +217,16 @@ export function MethodologySection() {
               <p className="text-xl md:text-2xl font-display font-semibold text-text-primary leading-snug mb-3">
                 "Ce n'est pas une étiquette.
                 <br />
-                <span className="text-brand-cyan">C'est une boussole.</span>"
+                <span className="text-brand-cyan">
+                  C'est <HighlightWord color="rgba(0,212,245,0.25)" delay={0.2}>une boussole.</HighlightWord>
+                </span>"
               </p>
               <p className="text-text-muted text-sm max-w-xl mx-auto leading-relaxed">
                 Dans un monde saturé de contenus, ceux qui marquent les esprits ne sont pas ceux qui parlent
-                le plus fort — mais ceux qui parlent avec <strong className="text-text-primary">justesse, authenticité et alignement</strong>.
+                le plus fort — mais ceux qui parlent avec{' '}
+                <HighlightWord color="rgba(253,224,71,0.35)" delay={0.3}>
+                  justesse, authenticité et alignement
+                </HighlightWord>.
                 Connaître ton profil, c'est comprendre ta voix unique.
               </p>
             </div>

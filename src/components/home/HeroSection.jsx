@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import logoText from '../../assets/logo-text.png'
+import { HighlightWord } from '../common/HighlightWord'
 
 export function HeroSection() {
   const navigate = useNavigate()
@@ -50,7 +51,9 @@ export function HeroSection() {
           12 Personnalités
         </span>
         <span className="inline-block mr-[0.25em]">du</span>
-        <span className="inline-block">Personal Branding</span>
+        <span className="inline-block">
+          <HighlightWord color="rgba(0,212,245,0.22)" delay={0.3}>Personal Branding</HighlightWord>
+        </span>
       </h1>
 
       {/* ── Sous-titre ── */}
@@ -59,7 +62,11 @@ export function HeroSection() {
           Découvrez toutes les combinaisons possibles et leurs caractéristiques uniques
         </p>
         <p className="text-text-faint text-sm md:text-base leading-relaxed mt-1">
-          basées sur la méthodologie exclusive du Surligneur.
+          basées sur la{' '}
+          <HighlightWord color="rgba(253,224,71,0.38)" delay={0.5}>
+            méthodologie exclusive du Surligneur
+          </HighlightWord>
+          .
         </p>
       </div>
 
