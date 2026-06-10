@@ -290,7 +290,15 @@ function Dashboard({ onLogout }) {
   }
 
   function handleViewTest(lead) {
-    navigate('/resultats', { state: { scores: lead.scores, profileId: lead.profile } })
+    navigate('/resultats', {
+      state: {
+        scores: lead.scores,
+        profileId: lead.profile,
+        fromAdmin: true,
+        leadName: `${lead.firstName} ${lead.lastName}`,
+        leadGender: lead.gender,
+      },
+    })
   }
 
   function exportCSV() {
@@ -414,17 +422,28 @@ function Dashboard({ onLogout }) {
 // ── Export ──────────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(false)
+  // Persist auth across navigation (no PIN re-entry when coming back from a lead's result)
+  const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem('admin_auth') === 'true')
+
+  function handleLogin() {
+    sessionStorage.setItem('admin_auth', 'true')
+    setAuthenticated(true)
+  }
+
+  function handleLogout() {
+    sessionStorage.removeItem('admin_auth')
+    setAuthenticated(false)
+  }
 
   return (
     <AnimatePresence mode="wait">
       {!authenticated ? (
         <motion.div key="pin" exit={{ opacity: 0, scale: 0.97 }} transition={{ duration: 0.2 }}>
-          <PinScreen onSuccess={() => setAuthenticated(true)} />
+          <PinScreen onSuccess={handleLogin} />
         </motion.div>
       ) : (
         <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-          <Dashboard onLogout={() => setAuthenticated(false)} />
+          <Dashboard onLogout={handleLogout} />
         </motion.div>
       )}
     </AnimatePresence>

@@ -1,17 +1,4 @@
 {
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd \"/Users/kevinchalambert/Desktop/Test personal branding\" && git add -A && git diff --cached --quiet || (git commit -m \"Auto-deploy - $(date '+%Y-%m-%d %H:%M')\" && git push) 2>/dev/null; exit 0",
-            "timeout": 30
-          }
-        ]
-      }
-    ]
-  },
   "permissions": {
     "allow": [
       "Bash(npm create *)",
@@ -77,7 +64,23 @@
       "WebFetch(domain:surligneur-personal-branding.vercel.app)",
       "Skill(update-config)",
       "Skill(update-config:*)",
-      "Bash(git remote *)"
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"/Users/kevinchalambert/Desktop/Test personal branding\" && git add -A && git diff --cached --quiet || (git commit -m \"Auto-deploy - $(date '+%Y-%m-%d %H:%M')\" && git push) 2>/dev/null; exit 0",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }

@@ -151,7 +151,11 @@ function ExampleAvatar({ ex, arc }) {
 export default function ResultsPage() {
   const { state } = useLocation()
   const navigate = useNavigate()
-  const [gender, setGender] = useState('masculine')
+  // Auto-select client gender when coming from admin
+  const [gender, setGender] = useState(() => {
+    if (state?.leadGender === 'femme') return 'feminine'
+    return 'masculine'
+  })
   const [analysis, setAnalysis] = useState(null)
   const [loadingAnalysis, setLoadingAnalysis] = useState(true)
   const printRef = useRef(null)
@@ -205,9 +209,18 @@ export default function ResultsPage() {
           {/* Top action bar */}
           <Section delay={0} className="print:hidden">
             <div className="flex items-center justify-between">
-              <Link to="/" className="text-sm text-text-muted hover:text-text-primary transition-colors">
-                ← Les 12 profils
-              </Link>
+              {state?.fromAdmin ? (
+                <button
+                  onClick={() => navigate('/admin')}
+                  className="text-sm text-text-muted hover:text-text-primary transition-colors flex items-center gap-1"
+                >
+                  ← Retour au dashboard
+                </button>
+              ) : (
+                <Link to="/" className="text-sm text-text-muted hover:text-text-primary transition-colors">
+                  ← Les 12 profils
+                </Link>
+              )}
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
@@ -219,6 +232,24 @@ export default function ResultsPage() {
               </motion.button>
             </div>
           </Section>
+
+          {/* Admin context banner */}
+          {state?.fromAdmin && state?.leadName && (
+            <Section delay={0.02} className="print:hidden">
+              <div
+                className="rounded-2xl px-4 py-3 flex items-center gap-3"
+                style={{ background: 'rgba(0,212,245,0.06)', border: '1px solid rgba(0,212,245,0.2)' }}
+              >
+                <span className="text-lg">👤</span>
+                <div>
+                  <p className="text-sm font-semibold text-brand-cyan">
+                    {state.leadName}
+                  </p>
+                  <p className="text-xs text-text-faint">Vue admin — résultats du test</p>
+                </div>
+              </div>
+            </Section>
+          )}
 
           {/* Profile hero */}
           <Section delay={0.05}>
