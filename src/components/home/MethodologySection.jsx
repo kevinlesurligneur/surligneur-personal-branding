@@ -235,7 +235,7 @@ export function MethodologySection() {
             className="btn-primary text-base px-8 py-4"
           >
             <span>🎯</span>
-            Passer le test maintenant — c'est gratuit
+            Passer le test maintenant
           </motion.button>
         </FadeIn>
 
