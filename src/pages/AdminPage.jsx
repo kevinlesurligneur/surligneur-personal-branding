@@ -118,7 +118,6 @@ function LeadRow({ lead, index, onViewTest, onDelete }) {
   const major = getMajor(lead.profile)
   const arc = major ? archetypeColors[major] : null
   const profile = lead.profile ? getProfile(lead.profile) : null
-  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const total = lead.scores ? Object.values(lead.scores).reduce((a, b) => a + b, 0) : 0
 
@@ -164,36 +163,18 @@ function LeadRow({ lead, index, onViewTest, onDelete }) {
           <div className="flex items-center gap-3 shrink-0">
             <span className="text-text-faint text-xs hidden sm:block">{formatDate(lead.date)}</span>
 
-            {confirmDelete ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-text-faint">Confirmer ?</span>
-                <button
-                  onClick={() => onDelete(lead.id)}
-                  className="text-xs font-semibold text-red-400 hover:text-red-300 px-2 py-1 rounded-lg border border-red-500/30 hover:border-red-400/50 transition-all"
-                >
-                  Supprimer
-                </button>
-                <button
-                  onClick={() => setConfirmDelete(false)}
-                  className="text-xs text-text-faint hover:text-text-muted transition-colors"
-                >
-                  Annuler
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setConfirmDelete(true)}
-                className="text-text-faint hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-500/10"
-                title="Supprimer"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6"/>
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                  <path d="M10 11v6M14 11v6"/>
-                  <path d="M9 6V4h6v2"/>
-                </svg>
-              </button>
-            )}
+            <button
+              onClick={() => onDelete(lead.id)}
+              className="text-text-faint hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-500/10"
+              title="Supprimer"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4h6v2"/>
+              </svg>
+            </button>
           </div>
         </div>
 
