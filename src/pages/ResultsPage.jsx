@@ -340,7 +340,7 @@ https://surligneur-personal-branding.vercel.app
             <div className="flex items-center justify-between">
               {state?.fromAdmin ? (
                 <button
-                  onClick={() => navigate('/admin')}
+                  onClick={() => navigate('/admin', { state: { returnFromResult: true } })}
                   className="text-sm text-text-muted hover:text-text-primary transition-colors flex items-center gap-1"
                 >
                   ← Retour au dashboard

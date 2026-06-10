@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Header } from '../components/layout/Header'
 import { getProfile, ARCHETYPES } from '../data/profiles'
@@ -403,16 +403,17 @@ function Dashboard({ onLogout }) {
 // ── Export ──────────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
-  // Persist auth across navigation (no PIN re-entry when coming back from a lead's result)
-  const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem('admin_auth') === 'true')
+  const location = useLocation()
+  // PIN skippé uniquement si on revient directement depuis la page résultats d'un client
+  const [authenticated, setAuthenticated] = useState(
+    () => location.state?.returnFromResult === true
+  )
 
   function handleLogin() {
-    sessionStorage.setItem('admin_auth', 'true')
     setAuthenticated(true)
   }
 
   function handleLogout() {
-    sessionStorage.removeItem('admin_auth')
     setAuthenticated(false)
   }
 
