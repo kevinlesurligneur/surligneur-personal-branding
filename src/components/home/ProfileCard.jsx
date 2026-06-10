@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ARCHETYPES } from '../../data/profiles'
 import { ProfileIllustration } from './ProfileIllustration'
@@ -32,6 +32,44 @@ export function ProfileCard({ profile, index = 0 }) {
 
   const tagStyle = archetypeTagStyles[profile.major]
 
+  /* ── 3D tilt ─────────────────────────────────────────────── */
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const springCfg = { stiffness: 200, damping: 22, mass: 0.5 }
+  const springX   = useSpring(mouseX, springCfg)
+  const springY   = useSpring(mouseY, springCfg)
+  const rotateY   = useTransform(springX, [-0.5, 0.5], [12, -12])
+  const rotateX   = useTransform(springY, [-0.5, 0.5], [-8,   8])
+
+  /* ── Glare overlay ───────────────────────────────────────── */
+  const glareOpacity = useMotionValue(0)
+  const springGlare  = useSpring(glareOpacity, { stiffness: 300, damping: 25 })
+  const glareBg      = useTransform([springX, springY], ([x, y]) => {
+    const gx = Math.round((x + 0.5) * 100)
+    const gy = Math.round((y + 0.5) * 100)
+    return `radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.11) 0%, transparent 65%)`
+  })
+
+  function handleMouseMove(e) {
+    const rect = e.currentTarget.getBoundingClientRect()
+    mouseX.set((e.clientX - rect.left) / rect.width  - 0.5)
+    mouseY.set((e.clientY - rect.top)  / rect.height - 0.5)
+  }
+
+  function handleMouseEnter(e) {
+    glareOpacity.set(1)
+    e.currentTarget.style.borderColor = archetypeBorderHover[profile.major]
+    e.currentTarget.style.boxShadow   = archetypeGlowHover[profile.major]
+  }
+
+  function handleMouseLeave(e) {
+    mouseX.set(0)
+    mouseY.set(0)
+    glareOpacity.set(0)
+    e.currentTarget.style.borderColor = '#2A2A45'
+    e.currentTarget.style.boxShadow   = 'none'
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 32 }}
@@ -45,16 +83,25 @@ export function ProfileCard({ profile, index = 0 }) {
         border: '1px solid #2A2A45',
         transition: 'border-color 0.35s ease, box-shadow 0.35s ease',
         willChange: 'transform',
+        rotateX,
+        rotateY,
+        transformPerspective: 900,
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = archetypeBorderHover[profile.major]
-        e.currentTarget.style.boxShadow = archetypeGlowHover[profile.major]
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = '#2A2A45'
-        e.currentTarget.style.boxShadow = 'none'
-      }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
+      {/* Glare */}
+      <motion.div
+        style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          borderRadius: 'inherit',
+          background: glareBg,
+          opacity: springGlare,
+          zIndex: 2,
+        }}
+      />
+
       {/* Top accent line */}
       <div
         className="h-0.5 w-full"
@@ -105,12 +152,12 @@ export function ProfileCard({ profile, index = 0 }) {
             background: 'transparent',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = tagStyle.bg
-            e.currentTarget.style.borderColor = major.color
+            e.currentTarget.style.background    = tagStyle.bg
+            e.currentTarget.style.borderColor   = major.color
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.borderColor = tagStyle.border
+            e.currentTarget.style.background    = 'transparent'
+            e.currentTarget.style.borderColor   = tagStyle.border
           }}
         >
           Voir le profil complet →
