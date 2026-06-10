@@ -8,7 +8,6 @@ import ResultsPage from './pages/ResultsPage'
 import AdminPage from './pages/AdminPage'
 import LegalPage from './pages/LegalPage'
 import { ScrollToTop } from './components/common/ScrollToTop'
-import { CustomCursor } from './components/common/CustomCursor'
 
 /** Wrapper appliqué à chaque page pour la transition d'entrée / sortie */
 function PageTransition({ children }) {
@@ -46,7 +45,6 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <CustomCursor />
       <ScrollToTop />
       <AnimatedRoutes />
     </BrowserRouter>
