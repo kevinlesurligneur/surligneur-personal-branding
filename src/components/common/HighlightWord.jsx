@@ -33,7 +33,9 @@ export function HighlightWord({
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-60px' })
 
-  const active = scrollOnly ? hasScrolled : isInView
+  // Quand scrollOnly : les DEUX conditions doivent être vraies
+  // (user a scrollé + élément est dans le viewport)
+  const active = scrollOnly ? (hasScrolled && isInView) : isInView
 
   return (
     <span
