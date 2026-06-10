@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { toPng } from 'html-to-image'
 import { Header } from '../components/layout/Header'
 import { getProfile, ARCHETYPES } from '../data/profiles'
 import { getProfileFromScores } from '../data/quiz'
@@ -59,6 +60,88 @@ Génère en JSON strict (sans markdown) :
     return null
   }
 }
+
+// ── Radar Chart ──────────────────────────────────────────────────────────────
+
+function RadarChart({ scores, total }) {
+  const S = 260, C = 130, R = 88, LR = 115
+
+  const p = k => (total > 0 ? scores[k] / total : 0)
+
+  const axes = [
+    { key: 'E', id: 'expert',        angle: -90, anchor: 'middle', name: 'Expert' },
+    { key: 'G', id: 'grande-gueule', angle:   0, anchor: 'start',  name: 'Gde Gueule' },
+    { key: 'L', id: 'leader',        angle:  90, anchor: 'middle', name: 'Leader' },
+    { key: 'X', id: 'explorateur',   angle: 180, anchor: 'end',    name: 'Explorateur' },
+  ]
+
+  const pt = (angle, r) => {
+    const rad = (angle * Math.PI) / 180
+    return { x: C + r * Math.cos(rad), y: C + r * Math.sin(rad) }
+  }
+
+  const gridPoly = lvl =>
+    axes.map(({ angle }) => { const { x, y } = pt(angle, R * lvl); return `${x},${y}` }).join(' ')
+
+  const dataPts = axes.map(({ key, angle }) => pt(angle, Math.max(p(key) * R, 3)))
+  const polygon = dataPts.map(({ x, y }) => `${x},${y}`).join(' ')
+
+  return (
+    <div className="flex justify-center py-4">
+      <svg width={S} height={S} viewBox={`0 0 ${S} ${S}`} style={{ overflow: 'visible' }}>
+        {/* Grid polygons */}
+        {[0.25, 0.5, 0.75, 1].map(lvl => (
+          <polygon key={lvl} points={gridPoly(lvl)}
+            fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+        ))}
+        {/* Axis lines */}
+        {axes.map(({ key, angle }) => {
+          const { x, y } = pt(angle, R)
+          return <line key={key} x1={C} y1={C} x2={x} y2={y}
+            stroke="rgba(255,255,255,0.09)" strokeWidth="1" />
+        })}
+        {/* Data polygon */}
+        <polygon points={polygon}
+          fill="rgba(0,212,245,0.1)" stroke="rgba(0,212,245,0.65)"
+          strokeWidth="2" strokeLinejoin="round" />
+        {/* Data dots */}
+        {dataPts.map(({ x, y }, i) => (
+          <circle key={i} cx={x} cy={y} r="4" fill="#00d4f5"
+            style={{ filter: 'drop-shadow(0 0 6px rgba(0,212,245,0.9))' }} />
+        ))}
+        {/* Labels */}
+        {axes.map(({ key, id, angle, anchor, name }) => {
+          const lp = pt(angle, LR)
+          const arc = ARCHETYPES[id]
+          const val = Math.round(p(key) * 100)
+          const isTop    = angle === -90
+          const isBottom = angle ===  90
+
+          // dy: for top axis, name is above pct; for bottom, name is below pct; for sides, stack normally
+          const nameY = lp.y + (isTop ? -10 : isBottom ? -6 : -8)
+          const pctY  = lp.y + (isTop ?   6 : isBottom ?  10 :  8)
+
+          return (
+            <g key={key}>
+              <text x={lp.x} y={nameY} textAnchor={anchor}
+                fontSize="8.5" fill="rgba(255,255,255,0.4)"
+                fontFamily="system-ui, -apple-system, sans-serif">
+                {name}
+              </text>
+              <text x={lp.x} y={pctY} textAnchor={anchor}
+                fontSize="13" fontWeight="700" fill={arc.textColor}
+                fontFamily="system-ui, -apple-system, sans-serif">
+                {val}%
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
+// ── Score Bar ─────────────────────────────────────────────────────────────────
 
 function ScoreBar({ archetype, score, total, delay }) {
   const [width, setWidth] = useState(0)
@@ -158,7 +241,10 @@ export default function ResultsPage() {
   })
   const [analysis, setAnalysis] = useState(null)
   const [loadingAnalysis, setLoadingAnalysis] = useState(true)
+  const [copied, setCopied] = useState(false)
+  const [downloading, setDownloading] = useState(false)
   const printRef = useRef(null)
+  const shareCardRef = useRef(null)
 
   useEffect(() => {
     if (!state?.scores || !state?.profileId) {
@@ -191,6 +277,49 @@ export default function ResultsPage() {
   const limites = analysis?.limites || staticAnalysis?.limites || []
   const blocage = analysis?.blocage || staticAnalysis?.blocage || null
   const conseils = analysis?.conseils || staticAnalysis?.conseils || []
+
+  // ── Share helpers ──────────────────────────────────────────────────────────
+
+  function pct(key) { return total > 0 ? Math.round(scores[key] / total * 100) : 0 }
+
+  function handleCopyText() {
+    const text = `${profile.emoji} Je viens de découvrir mon profil Personal Branding avec Le Surligneur !
+
+Je suis ${profile.name}
+${majorArc.label} (majeur) · ${minorArc.labelShort || minorArc.label} (mineur)
+
+📊 Ma répartition :
+${majorArc.icon} Expert          ${pct('E')}%
+📢 Grande Gueule  ${pct('G')}%
+🏴 Leader          ${pct('L')}%
+🧭 Explorateur     ${pct('X')}%
+
+Testez-vous parmi les 12 personnalités du Personal Branding 👇
+https://surligneur-personal-branding.vercel.app
+
+#PersonalBranding #LinkedIn #LeSurligneur`
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 3000)
+    })
+  }
+
+  async function handleDownloadCard() {
+    if (!shareCardRef.current || downloading) return
+    setDownloading(true)
+    try {
+      const dataUrl = await toPng(shareCardRef.current, { pixelRatio: 2, cacheBust: true })
+      const a = document.createElement('a')
+      a.download = `profil-${profileId}-lesurligneur.png`
+      a.href = dataUrl
+      a.click()
+    } catch (err) {
+      console.error('Erreur génération carte:', err)
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-bg-primary print:bg-white">
@@ -421,35 +550,132 @@ export default function ResultsPage() {
           <Section delay={0.4}>
             <Card>
               <SectionTitle icon="📊" label="Répartition de tes points" />
-              <div className="space-y-4 mb-6">
-                {ARCHETYPE_ORDER.map(({ letter, id }, i) => (
-                  <ScoreBar
-                    key={id}
-                    archetype={id}
-                    score={scores[letter] || 0}
-                    total={total}
-                    delay={i * 120}
-                  />
-                ))}
-              </div>
-              <div className="grid grid-cols-4 gap-3">
+
+              {/* Radar chart — primary visual */}
+              <RadarChart scores={scores} total={total} />
+
+              {/* Score number boxes */}
+              <div className="grid grid-cols-4 gap-3 mt-2">
                 {ARCHETYPE_ORDER.map(({ letter, id }) => {
                   const arc = ARCHETYPES[id]
                   return (
-                    <div key={id} className="text-center rounded-2xl border border-border-subtle p-3 print:border-gray-200">
-                      <p className="text-xl font-bold font-display" style={{ color: arc.textColor }}>
-                        {scores[letter] || 0}
+                    <div key={id} className="text-center rounded-2xl border border-border-subtle p-3 print:border-gray-200"
+                      style={{ background: `${arc.colorBg}55` }}>
+                      <p className="text-2xl font-bold font-display" style={{ color: arc.textColor }}>
+                        {pct(letter)}%
                       </p>
                       <p className="text-text-faint text-xs mt-1 print:text-gray-500">{arc.labelShort || arc.label}</p>
                     </div>
                   )
                 })}
               </div>
+
+              {/* Print: keep bars for PDF readability */}
+              <div className="hidden print:block space-y-3 mt-4">
+                {ARCHETYPE_ORDER.map(({ letter, id }, i) => (
+                  <ScoreBar key={id} archetype={id} score={scores[letter] || 0} total={total} delay={i * 120} />
+                ))}
+              </div>
+            </Card>
+          </Section>
+
+          {/* LinkedIn Share */}
+          <Section delay={0.43} className="print:hidden">
+            <Card>
+              <SectionTitle icon="📤" label="Partager votre profil" />
+
+              {/* Preview card (visible) */}
+              <div className="rounded-2xl overflow-hidden mb-5 border border-border-subtle">
+                <div style={{
+                  background: 'linear-gradient(160deg, #071e3d 0%, #0d1224 50%, #08080F 100%)',
+                  padding: '24px 28px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}>
+                  {/* Glow */}
+                  <div style={{
+                    position: 'absolute', top: '-40px', right: '-40px',
+                    width: '160px', height: '160px',
+                    background: `radial-gradient(circle, ${majorArc.color}30 0%, transparent 70%)`,
+                    pointerEvents: 'none',
+                  }} />
+                  {/* Top row */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <div className="text-4xl mb-2">{profile.emoji}</div>
+                      <div className="font-display font-bold text-xl text-white leading-tight">{profile.name}</div>
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          style={{ color: majorArc.textColor, background: majorArc.colorBg, border: `1px solid ${majorArc.color}44` }}>
+                          {majorArc.labelShort || majorArc.label} majeur
+                        </span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          style={{ color: minorArc.textColor, background: minorArc.colorBg, border: `1px solid ${minorArc.color}44` }}>
+                          {minorArc.labelShort || minorArc.label} mineur
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div style={{ color: '#00d4f5', fontSize: '11px', fontWeight: '800', letterSpacing: '0.08em' }}>LE SURLIGNEUR</div>
+                      <div className="text-text-faint text-[9px] mt-0.5">Test Personal Branding</div>
+                    </div>
+                  </div>
+                  {/* Mini score bars */}
+                  <div className="space-y-2">
+                    {ARCHETYPE_ORDER.map(({ letter, id }) => {
+                      const arc = ARCHETYPES[id]
+                      const p = pct(letter)
+                      return (
+                        <div key={id} className="flex items-center gap-2">
+                          <span className="text-[10px] text-text-faint w-20 shrink-0">{arc.labelShort || arc.label}</span>
+                          <div className="flex-1 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                            <div className="h-full rounded-full" style={{ width: `${p}%`, background: arc.color }} />
+                          </div>
+                          <span className="text-[10px] font-bold w-8 text-right shrink-0" style={{ color: arc.textColor }}>{p}%</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <div className="mt-3 pt-2.5 border-t border-white/5 text-text-faint text-[9px]">
+                    Découvrez votre profil · lesurligneur.fr
+                  </div>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                  onClick={handleCopyText}
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold border transition-all duration-200"
+                  style={{
+                    color: copied ? '#4ade80' : '#00d4f5',
+                    borderColor: copied ? 'rgba(74,222,128,0.4)' : 'rgba(0,212,245,0.3)',
+                    background: copied ? 'rgba(74,222,128,0.06)' : 'rgba(0,212,245,0.06)',
+                  }}
+                >
+                  <span>{copied ? '✅' : '📋'}</span>
+                  {copied ? 'Texte copié !' : 'Copier le texte'}
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                  onClick={handleDownloadCard}
+                  disabled={downloading}
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold border border-border-subtle text-text-muted hover:text-text-primary hover:border-brand-cyan/30 transition-all duration-200 disabled:opacity-60"
+                >
+                  <span>{downloading ? '⏳' : '⬇️'}</span>
+                  {downloading ? 'Génération…' : "Télécharger l'image"}
+                </motion.button>
+              </div>
+              <p className="text-text-faint text-xs text-center mt-3">
+                Copiez le texte · collez-le sur LinkedIn · ajoutez l'image en pièce jointe 🎯
+              </p>
             </Card>
           </Section>
 
           {/* Actions */}
-          <Section delay={0.45} className="print:hidden">
+          <Section delay={0.48} className="print:hidden">
             <div className="flex flex-col gap-3">
               <motion.button
                 whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(0,212,245,0.25)' }}
@@ -485,6 +711,76 @@ export default function ResultsPage() {
 
         </div>
       </main>
+
+      {/* Hidden share card — captured by html-to-image */}
+      <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none', zIndex: -1 }}>
+        <div ref={shareCardRef} style={{
+          width: '600px',
+          height: '315px',
+          background: 'linear-gradient(160deg, #071e3d 0%, #0d1224 50%, #08080F 100%)',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+          padding: '32px 40px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          boxSizing: 'border-box',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* Glow */}
+          <div style={{
+            position: 'absolute', top: '-60px', right: '-60px',
+            width: '200px', height: '200px',
+            background: `radial-gradient(circle, ${majorArc.color}30 0%, transparent 70%)`,
+          }} />
+          {/* Top row */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <div style={{ fontSize: '40px', marginBottom: '8px', lineHeight: 1 }}>{profile.emoji}</div>
+              <div style={{ color: 'white', fontSize: '26px', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+                {profile.name}
+              </div>
+              <div style={{ marginTop: '8px', display: 'flex', gap: '6px' }}>
+                <span style={{ fontSize: '11px', fontWeight: '600', padding: '3px 10px', borderRadius: '20px', border: `1px solid ${majorArc.color}44`, color: majorArc.textColor, background: majorArc.colorBg }}>
+                  {majorArc.labelShort || majorArc.label} majeur
+                </span>
+                <span style={{ fontSize: '11px', fontWeight: '600', padding: '3px 10px', borderRadius: '20px', border: `1px solid ${minorArc.color}44`, color: minorArc.textColor, background: minorArc.colorBg }}>
+                  {minorArc.labelShort || minorArc.label} mineur
+                </span>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ color: '#00d4f5', fontSize: '13px', fontWeight: '800', letterSpacing: '0.08em' }}>LE SURLIGNEUR</div>
+              <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '10px', marginTop: '3px' }}>Test Personal Branding</div>
+            </div>
+          </div>
+          {/* Score bars */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '18px 0 10px' }}>
+            {ARCHETYPE_ORDER.map(({ letter, id }) => {
+              const arc = ARCHETYPES[id]
+              const p = pct(letter)
+              return (
+                <div key={id} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', width: '90px', flexShrink: 0 }}>
+                    {arc.labelShort || arc.label}
+                  </span>
+                  <div style={{ flex: 1, height: '5px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px' }}>
+                    <div style={{ width: `${p}%`, height: '100%', background: arc.color, borderRadius: '3px' }} />
+                  </div>
+                  <span style={{ fontSize: '13px', fontWeight: '700', color: arc.textColor, width: '36px', textAlign: 'right', flexShrink: 0 }}>
+                    {p}%
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+          {/* Footer */}
+          <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            Découvrez votre profil parmi les 12 personnalités du Personal Branding · lesurligneur.fr
+          </div>
+        </div>
+      </div>
+
     </div>
   )
 }
