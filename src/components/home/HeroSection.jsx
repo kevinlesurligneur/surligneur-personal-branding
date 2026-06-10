@@ -52,7 +52,7 @@ export function HeroSection() {
         </span>
         <span className="inline-block mr-[0.25em]">du</span>
         <span className="inline-block">
-          <HighlightWord color="rgba(0,212,245,0.22)" delay={0.2} scrollOnly>Personal Branding</HighlightWord>
+          <HighlightWord color="rgba(0,212,245,0.22)" delay={0.5}>Personal Branding</HighlightWord>
         </span>
       </h1>
 
