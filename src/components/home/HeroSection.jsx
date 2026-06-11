@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import logoText from '../../assets/logo-text.png'
 import { HighlightWord } from '../common/HighlightWord'
 
 export function HeroSection() {
@@ -31,15 +30,6 @@ export function HeroSection() {
         animate={{ scale: [1, 1.3, 1], x: [0, -20, 0], y: [0, 25, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       />
-
-      {/* ── Logo texte ── */}
-      <div className="relative z-10 mb-8">
-        <img
-          src={logoText}
-          alt="Le Surligneur"
-          className="h-10 md:h-12 mx-auto object-contain"
-        />
-      </div>
 
       {/* ── Titre ── */}
       <h1 className="relative z-10 font-display font-bold text-3xl md:text-4xl lg:text-5xl max-w-2xl leading-[1.35] mb-6">

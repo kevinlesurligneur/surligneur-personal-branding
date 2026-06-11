@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import logoSymbol from '../../assets/logo-symbol.png'
+import logoText from '../../assets/logo-text.png'
 import { useTheme } from '../../contexts/ThemeContext'
 
 function SunIcon() {
@@ -50,9 +50,9 @@ export function Header() {
     >
       <button onClick={handleLogoClick} className="flex items-center">
         <img
-          src={logoSymbol}
+          src={logoText}
           alt="Le Surligneur — accueil"
-          className="h-9 w-9 rounded-lg object-contain"
+          className="h-7 md:h-8 object-contain"
         />
       </button>
 
