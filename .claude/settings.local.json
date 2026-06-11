@@ -67,7 +67,9 @@
       "Bash(git remote *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(curl -L \"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Daniel_Radcliffe_in_July_2015.jpg/400px-Daniel_Radcliffe_in_July_2015.jpg\" -o \"/Users/kevinchalambert/Desktop/Test personal branding/public/avatars/harry-potter.jpg\")",
+      "Bash(curl -L -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://upload.wikimedia.org/wikipedia/commons/3/3b/Daniel_Radcliffe_in_July_2015.jpg\" -o \"/Users/kevinchalambert/Desktop/Test personal branding/public/avatars/harry-potter.jpg\")"
     ]
   },
   "hooks": {

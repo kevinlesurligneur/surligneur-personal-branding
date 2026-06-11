@@ -265,8 +265,8 @@ const masculineProfiles = [
     keywords: ["Exploration", "Pionnière", "Analyse", "Avant-garde", "Découverte"],
     examples: [
       { name: 'Guillaume Moubeche', initials: 'GM', type: 'real', avatar: '/avatars/guillaume-moubeche.jpg' },
-      { name: 'Rodolphe Dutel', initials: 'RD', type: 'real', avatar: '/avatars/rodolphe-dutel.jpg' },
-      { name: 'Indiana Jones', initials: 'IJ', type: 'fiction', avatar: '/avatars/indiana-jones.jpg' },
+      { name: 'Romain Lanery', initials: 'RL', type: 'real', avatar: '/avatars/romain-lanery.jpg' },
+      { name: 'Harry Potter', initials: 'HP', type: 'fiction', avatar: '/avatars/harry-potter.jpg' },
       { name: 'Bilbo Baggins', initials: 'BB', type: 'fiction', avatar: '/avatars/bilbo-baggins.jpg' },
     ],
   },
@@ -286,7 +286,7 @@ const masculineProfiles = [
     examples: [
       { name: 'Antoine BM', initials: 'AB', type: 'real', avatar: '/avatars/antoine-bm.jpg' },
       { name: 'Toinon Georget', initials: 'TG', type: 'real', avatar: '/avatars/toinon-georget.jpg' },
-      { name: 'Zorro', initials: 'Zo', type: 'fiction', avatar: '/avatars/zorro.jpg' },
+      { name: 'Indiana Jones', initials: 'IJ', type: 'fiction', avatar: '/avatars/indiana-jones.jpg' },
       { name: 'Mad Max', initials: 'MM', type: 'fiction', avatar: '/avatars/mad-max.jpg' },
     ],
   },
@@ -304,8 +304,8 @@ const masculineProfiles = [
     contentStyle: "Signaux faibles partagés, futur proche décodé, retours de terrain documentés.",
     keywords: ["Vision", "Anticipation", "Partage", "Communauté", "Avant-garde"],
     examples: [
-      { name: 'Marie Dollé', initials: 'MD', type: 'real', avatar: '/avatars/marie-dolle.jpg' },
-      { name: 'Thibault Louis', initials: 'TL', type: 'real', avatar: '/avatars/thibault-louis.jpg' },
+      { name: 'Pauline Laigneau', initials: 'PL', type: 'real', avatar: '/avatars/pauline-laigneau.jpg' },
+      { name: 'Mamad Dembele', initials: 'MD', type: 'real', avatar: '/avatars/mamad-dembele.jpg' },
       { name: 'Aragorn', initials: 'Ar', type: 'fiction', avatar: '/avatars/aragorn.jpg' },
       { name: 'Moana', initials: 'Mo', type: 'fiction', avatar: '/avatars/moana.jpg' },
     ],
@@ -508,8 +508,8 @@ const feminineProfiles = [
     keywords: ["Exploration", "Pionnière", "Analyse", "Avant-garde", "Découverte"],
     examples: [
       { name: 'Guillaume Moubeche', initials: 'GM', type: 'real', avatar: '/avatars/guillaume-moubeche.jpg' },
-      { name: 'Rodolphe Dutel', initials: 'RD', type: 'real', avatar: '/avatars/rodolphe-dutel.jpg' },
-      { name: 'Indiana Jones', initials: 'IJ', type: 'fiction', avatar: '/avatars/indiana-jones.jpg' },
+      { name: 'Romain Lanery', initials: 'RL', type: 'real', avatar: '/avatars/romain-lanery.jpg' },
+      { name: 'Harry Potter', initials: 'HP', type: 'fiction', avatar: '/avatars/harry-potter.jpg' },
       { name: 'Bilbo Baggins', initials: 'BB', type: 'fiction', avatar: '/avatars/bilbo-baggins.jpg' },
     ],
   },
@@ -529,7 +529,7 @@ const feminineProfiles = [
     examples: [
       { name: 'Antoine BM', initials: 'AB', type: 'real', avatar: '/avatars/antoine-bm.jpg' },
       { name: 'Toinon Georget', initials: 'TG', type: 'real', avatar: '/avatars/toinon-georget.jpg' },
-      { name: 'Zorro', initials: 'Zo', type: 'fiction', avatar: '/avatars/zorro.jpg' },
+      { name: 'Indiana Jones', initials: 'IJ', type: 'fiction', avatar: '/avatars/indiana-jones.jpg' },
       { name: 'Mad Max', initials: 'MM', type: 'fiction', avatar: '/avatars/mad-max.jpg' },
     ],
   },
@@ -547,8 +547,8 @@ const feminineProfiles = [
     contentStyle: "Signaux faibles partagés, futur proche décodé, retours de terrain.",
     keywords: ["Vision", "Anticipation", "Partage", "Communauté", "Avant-garde"],
     examples: [
-      { name: 'Marie Dollé', initials: 'MD', type: 'real', avatar: '/avatars/marie-dolle.jpg' },
-      { name: 'Thibault Louis', initials: 'TL', type: 'real', avatar: '/avatars/thibault-louis.jpg' },
+      { name: 'Pauline Laigneau', initials: 'PL', type: 'real', avatar: '/avatars/pauline-laigneau.jpg' },
+      { name: 'Mamad Dembele', initials: 'MD', type: 'real', avatar: '/avatars/mamad-dembele.jpg' },
       { name: 'Aragorn', initials: 'Ar', type: 'fiction', avatar: '/avatars/aragorn.jpg' },
       { name: 'Moana', initials: 'Mo', type: 'fiction', avatar: '/avatars/moana.jpg' },
     ],
