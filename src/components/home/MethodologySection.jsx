@@ -206,7 +206,7 @@ export function MethodologySection() {
         <FadeIn delay={0.1} className="mb-14">
           <div className="relative rounded-2xl overflow-hidden p-7 md:p-9 text-center"
             style={{
-              background: 'linear-gradient(160deg, #071e3d 0%, #0d1224 60%, #08080F 100%)',
+              background: 'var(--vision-gradient)',
               border: '1px solid rgba(0,212,245,0.15)',
             }}>
             {/* Glow */}

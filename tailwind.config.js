@@ -8,22 +8,22 @@ export default {
     extend: {
       colors: {
         bg: {
-          primary: '#08080F',
-          card: '#1A1A2E',
-          elevated: '#22223B',
+          primary: 'var(--bg-primary)',
+          card: 'var(--bg-card)',
+          elevated: 'var(--bg-elevated)',
         },
         border: {
-          subtle: '#2A2A45',
-          strong: '#3D3D6B',
+          subtle: 'var(--border-subtle)',
+          strong: 'var(--border-strong)',
         },
         brand: {
           cyan: '#00D4F5',
           coral: '#FF4D6D',
         },
         text: {
-          primary: '#F0F4FF',
-          muted: '#8B92B8',
-          faint: '#555A7A',
+          primary: 'var(--text-primary)',
+          muted: 'var(--text-muted)',
+          faint: 'var(--text-faint)',
         },
         archetype: {
           expert: '#3B82F6',

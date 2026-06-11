@@ -66,7 +66,7 @@ export function ProfileCard({ profile, index = 0 }) {
     mouseX.set(0)
     mouseY.set(0)
     glareOpacity.set(0)
-    e.currentTarget.style.borderColor = '#2A2A45'
+    e.currentTarget.style.borderColor = 'var(--border-subtle)'
     e.currentTarget.style.boxShadow   = 'none'
   }
 
@@ -79,8 +79,8 @@ export function ProfileCard({ profile, index = 0 }) {
       whileHover={{ y: -10, scale: 1.02 }}
       className="group relative flex flex-col rounded-3xl overflow-hidden"
       style={{
-        background: '#1A1A2E',
-        border: '1px solid #2A2A45',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-subtle)',
         transition: 'border-color 0.35s ease, box-shadow 0.35s ease',
         willChange: 'transform',
         rotateX,

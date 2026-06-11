@@ -9,7 +9,7 @@ export function HeroSection() {
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-32 overflow-hidden"
-      style={{ background: 'linear-gradient(160deg, #071e3d 0%, #0d1224 40%, #08080F 75%)' }}
+      style={{ background: 'var(--hero-gradient)' }}
     >
 
       {/* ── Orbes animés ── */}
