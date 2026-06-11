@@ -264,7 +264,7 @@ const masculineProfiles = [
     contentStyle: "Premières explorations documentées, synthèses de nouvelles tendances, analyses de signaux faibles.",
     keywords: ["Exploration", "Pionnière", "Analyse", "Avant-garde", "Découverte"],
     examples: [
-      { name: 'Oussama Ammar', initials: 'OA', type: 'real', avatar: '/avatars/oussama-ammar.jpg' },
+      { name: 'Guillaume Moubeche', initials: 'GM', type: 'real', avatar: '/avatars/guillaume-moubeche.jpg' },
       { name: 'Rodolphe Dutel', initials: 'RD', type: 'real', avatar: '/avatars/rodolphe-dutel.jpg' },
       { name: 'Indiana Jones', initials: 'IJ', type: 'fiction', avatar: '/avatars/indiana-jones.jpg' },
       { name: 'Bilbo Baggins', initials: 'BB', type: 'fiction', avatar: '/avatars/bilbo-baggins.jpg' },
@@ -284,8 +284,8 @@ const masculineProfiles = [
     contentStyle: "Témoignages dérangeants, contrepied assumé, observations depuis les marges.",
     keywords: ["Rébellion", "Vérité", "Courage", "Rupture", "Vision"],
     examples: [
-      { name: 'Nassim Taleb', initials: 'NT', type: 'real', avatar: '/avatars/nassim-taleb.jpg' },
-      { name: 'Élie Chevignard', initials: 'ÉC', type: 'real', avatar: '/avatars/elie-chevignard.jpg' },
+      { name: 'Antoine BM', initials: 'AB', type: 'real', avatar: '/avatars/antoine-bm.jpg' },
+      { name: 'Toinon Georget', initials: 'TG', type: 'real', avatar: '/avatars/toinon-georget.jpg' },
       { name: 'Zorro', initials: 'Zo', type: 'fiction', avatar: '/avatars/zorro.jpg' },
       { name: 'Mad Max', initials: 'MM', type: 'fiction', avatar: '/avatars/mad-max.jpg' },
     ],
@@ -507,7 +507,7 @@ const feminineProfiles = [
     contentStyle: "Premières explorations documentées, nouvelles tendances, signaux faibles.",
     keywords: ["Exploration", "Pionnière", "Analyse", "Avant-garde", "Découverte"],
     examples: [
-      { name: 'Oussama Ammar', initials: 'OA', type: 'real', avatar: '/avatars/oussama-ammar.jpg' },
+      { name: 'Guillaume Moubeche', initials: 'GM', type: 'real', avatar: '/avatars/guillaume-moubeche.jpg' },
       { name: 'Rodolphe Dutel', initials: 'RD', type: 'real', avatar: '/avatars/rodolphe-dutel.jpg' },
       { name: 'Indiana Jones', initials: 'IJ', type: 'fiction', avatar: '/avatars/indiana-jones.jpg' },
       { name: 'Bilbo Baggins', initials: 'BB', type: 'fiction', avatar: '/avatars/bilbo-baggins.jpg' },
@@ -527,8 +527,8 @@ const feminineProfiles = [
     contentStyle: "Témoignages dérangeants, contrepied assumé, observations depuis les marges.",
     keywords: ["Rébellion", "Vérité", "Courage", "Rupture", "Vision"],
     examples: [
-      { name: 'Nassim Taleb', initials: 'NT', type: 'real', avatar: '/avatars/nassim-taleb.jpg' },
-      { name: 'Élie Chevignard', initials: 'ÉC', type: 'real', avatar: '/avatars/elie-chevignard.jpg' },
+      { name: 'Antoine BM', initials: 'AB', type: 'real', avatar: '/avatars/antoine-bm.jpg' },
+      { name: 'Toinon Georget', initials: 'TG', type: 'real', avatar: '/avatars/toinon-georget.jpg' },
       { name: 'Zorro', initials: 'Zo', type: 'fiction', avatar: '/avatars/zorro.jpg' },
       { name: 'Mad Max', initials: 'MM', type: 'fiction', avatar: '/avatars/mad-max.jpg' },
     ],
