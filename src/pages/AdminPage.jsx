@@ -308,9 +308,31 @@ function Dashboard({ onLogout }) {
     )
   })
 
-  const today = new Date().toDateString()
-  const todayCount = leads.filter(l => new Date(l.date).toDateString() === today).length
-  const withSocial = leads.filter(l => l.socialMedia === 'oui').length
+  // Archétype dominant
+  const archetypeCounts = leads.reduce((acc, l) => {
+    const major = getMajor(l.profile)
+    if (major) acc[major] = (acc[major] || 0) + 1
+    return acc
+  }, {})
+  const dominantEntry = Object.entries(archetypeCounts).sort((a, b) => b[1] - a[1])[0]
+  const archetypeLabels = { expert: 'Expert', 'grande-gueule': 'Grande Gueule', leader: 'Leader', explorateur: 'Explorateur' }
+  const dominantLabel = dominantEntry ? archetypeLabels[dominantEntry[0]] : '—'
+  const dominantColor = dominantEntry ? archetypeColors[dominantEntry[0]]?.color : null
+  const dominantPct   = dominantEntry && leads.length ? ` (${Math.round(dominantEntry[1] / leads.length * 100)}%)` : ''
+
+  // Répartition H/F
+  const hommes = leads.filter(l => l.gender === 'homme').length
+  const femmes = leads.filter(l => l.gender === 'femme').length
+  const genderDisplay = leads.length
+    ? `${Math.round(hommes / leads.length * 100)}% H · ${Math.round(femmes / leads.length * 100)}% F`
+    : '—'
+
+  // Ce mois-ci
+  const now = new Date()
+  const thisMonthCount = leads.filter(l => {
+    const d = new Date(l.date)
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  }).length
 
   return (
     <div className="min-h-screen bg-bg-primary">
@@ -340,18 +362,41 @@ function Dashboard({ onLogout }) {
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            {[
-              { label: 'Total leads', value: leads.length, icon: '👥' },
-              { label: "Aujourd'hui", value: todayCount, icon: '📅' },
-              { label: 'Sur les réseaux', value: withSocial, icon: '📱' },
-              { label: 'Taux réseaux', value: leads.length ? `${Math.round(withSocial / leads.length * 100)}%` : '—', icon: '📊' },
-            ].map(({ label, value, icon }) => (
-              <div key={label} className="rounded-2xl border border-border-subtle bg-bg-card px-5 py-4">
-                <p className="text-2xl mb-1">{icon}</p>
-                <p className="font-display font-bold text-2xl text-text-primary">{value}</p>
-                <p className="text-xs text-text-faint mt-0.5">{label}</p>
-              </div>
-            ))}
+            {/* Total réponses */}
+            <div className="rounded-2xl border border-border-subtle bg-bg-card px-5 py-4">
+              <p className="text-2xl mb-1">📋</p>
+              <p className="font-display font-bold text-2xl text-text-primary">{leads.length}</p>
+              <p className="text-xs text-text-faint mt-0.5">Total réponses</p>
+            </div>
+
+            {/* Archétype dominant */}
+            <div className="rounded-2xl border border-border-subtle bg-bg-card px-5 py-4">
+              <p className="text-2xl mb-1">🏆</p>
+              <p className="font-display font-bold text-xl leading-tight"
+                style={{ color: dominantColor || 'var(--text-primary)' }}>
+                {dominantLabel}
+              </p>
+              {dominantPct && (
+                <p className="text-xs mt-0.5" style={{ color: dominantColor ? `${dominantColor}99` : undefined }}>
+                  {dominantPct.trim()}
+                </p>
+              )}
+              <p className="text-xs text-text-faint mt-0.5">Archétype dominant</p>
+            </div>
+
+            {/* Répartition H/F */}
+            <div className="rounded-2xl border border-border-subtle bg-bg-card px-5 py-4">
+              <p className="text-2xl mb-1">👥</p>
+              <p className="font-display font-bold text-xl text-text-primary">{genderDisplay}</p>
+              <p className="text-xs text-text-faint mt-0.5">Répartition H / F</p>
+            </div>
+
+            {/* Ce mois-ci */}
+            <div className="rounded-2xl border border-border-subtle bg-bg-card px-5 py-4">
+              <p className="text-2xl mb-1">📅</p>
+              <p className="font-display font-bold text-2xl text-text-primary">{thisMonthCount}</p>
+              <p className="text-xs text-text-faint mt-0.5">Ce mois-ci</p>
+            </div>
           </div>
 
           {/* Search */}
