@@ -3,12 +3,17 @@ import { kv } from './_kv.js'
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
 
+  const url   = process.env.STORAGE_KV_REST_API_URL || process.env.KV_REST_API_URL || ''
+  const token = process.env.STORAGE_KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || ''
   const checks = {
-    kv_url:   !!(process.env.KV_REST_API_URL || process.env.STORAGE_KV_REST_API_URL),
-    kv_token: !!(process.env.KV_REST_API_TOKEN || process.env.STORAGE_KV_REST_API_TOKEN),
-    kv_ping:  false,
-    leads_count: null,
-    error: null,
+    kv_url:          !!(url),
+    kv_token:        !!(token),
+    url_preview:     url.slice(0, 45),
+    storage_url_set: !!process.env.STORAGE_KV_REST_API_URL,
+    kv_url_set:      !!process.env.KV_REST_API_URL,
+    kv_ping:         false,
+    leads_count:     null,
+    error:           null,
   }
 
   try {
