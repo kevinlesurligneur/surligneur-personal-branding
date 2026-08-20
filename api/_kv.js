@@ -1,13 +1,13 @@
 const BASE_URL = (
   process.env.STORAGE_KV_REST_API_URL ||
   process.env.KV_REST_API_URL ||
-  ''
+  'https://set-octopus-169508.upstash.io'
 ).replace(/\/$/, '')
 
 const TOKEN =
   process.env.STORAGE_KV_REST_API_TOKEN ||
   process.env.KV_REST_API_TOKEN ||
-  ''
+  'gQAAAAAAApYkAAIgcDJjYjc2MDI5ZWYyYjg0NGNhYTQwMDMwMDZiZTk3NTY0MA'
 
 async function cmd(...args) {
   const res = await fetch(BASE_URL, {

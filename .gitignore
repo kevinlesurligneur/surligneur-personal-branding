@@ -7,3 +7,4 @@ dist
 *.local
 data/leads.json
 *.log
+.claude/
