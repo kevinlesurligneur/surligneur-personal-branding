@@ -370,7 +370,7 @@ https://surligneur-personal-branding.vercel.app
 
       {/* Print header */}
       <div className="hidden print:block pt-6 pb-4 px-8 border-b border-gray-200">
-        <p className="text-sm text-gray-500">Le Surligneur — Test des 12 Personnalités du Personal Branding</p>
+        <p className="text-sm text-gray-500">Le Surligneur · Test des 12 Personnalités du Personal Branding</p>
       </div>
 
       <main ref={printRef} className="pt-24 pb-20 px-6 print:pt-8 print:pb-8">
@@ -415,7 +415,7 @@ https://surligneur-personal-branding.vercel.app
                   <p className="text-sm font-semibold text-brand-cyan">
                     {state.leadName}
                   </p>
-                  <p className="text-xs text-text-faint">Vue admin — résultats du test</p>
+                  <p className="text-xs text-text-faint">Vue admin · résultats du test</p>
                 </div>
               </div>
             </Section>

@@ -352,7 +352,7 @@ function Dashboard({ onLogout }) {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
               <h1 className="font-display font-bold text-3xl text-text-primary">Dashboard Admin</h1>
-              <p className="text-text-muted text-sm mt-1">Le Surligneur — données centralisées</p>
+              <p className="text-text-muted text-sm mt-1">Le Surligneur · données centralisées</p>
             </div>
             <div className="flex items-center gap-3">
               <button onClick={fetchLeads} className="text-sm text-text-faint hover:text-brand-cyan transition-colors px-3 py-2" title="Rafraîchir">

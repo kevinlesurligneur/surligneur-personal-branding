@@ -102,7 +102,7 @@ export function MethodologySection() {
           </h3>
           <p className="text-text-muted text-sm mb-6">
             Nous avons identifié 4 grandes postures universelles que l'on retrouve chez les entrepreneurs,
-            créateurs et figures publiques. Chacune exprime une force singulière — et des risques si elle est incarnée seule.
+            créateurs et figures publiques. Chacune exprime une force singulière, avec des angles de vigilance quand elle est incarnée seule.
           </p>
         </FadeIn>
 
@@ -183,7 +183,7 @@ export function MethodologySection() {
             Ce que tu vas découvrir
           </h3>
           <p className="text-text-muted text-sm mb-6">
-            Ce test ne se limite pas à une curiosité psychologique — c'est un outil stratégique
+            Ce test ne se limite pas à une curiosité psychologique : c'est un outil stratégique
             pour les entrepreneurs, créateurs et leaders d'opinion.
           </p>
 
@@ -223,7 +223,7 @@ export function MethodologySection() {
               </p>
               <p className="text-text-muted text-sm max-w-xl mx-auto leading-relaxed">
                 Dans un monde saturé de contenus, ceux qui marquent les esprits ne sont pas ceux qui parlent
-                le plus fort — mais ceux qui parlent avec{' '}
+                le plus fort, mais ceux qui parlent avec{' '}
                 <HighlightWord color="rgba(253,224,71,0.35)" delay={0.3} scrollOnly>
                   justesse, authenticité et alignement
                 </HighlightWord>.
