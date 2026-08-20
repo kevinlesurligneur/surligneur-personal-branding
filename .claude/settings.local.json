@@ -73,7 +73,9 @@
       "mcp__Claude_in_Chrome__navigate",
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "Bash(npx vercel *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(curl -s \"https://surligneur-personal-branding.vercel.app/api/health\")",
+      "Bash(curl -s \"https://surligneur-personal-branding.vercel.app/api/leads\")"
     ]
   },
   "hooks": {
