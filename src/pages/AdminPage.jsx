@@ -246,13 +246,21 @@ function Dashboard({ onLogout }) {
   const [leads, setLeads] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [kvError, setKvError] = useState(null)
 
   const fetchLeads = useCallback(async () => {
+    setKvError(null)
     try {
       const res = await fetch('/api/leads')
       const data = await res.json()
-      setLeads([...data].reverse())
+      if (!res.ok) {
+        setKvError(data.message || 'Erreur de connexion à la base de données.')
+        setLeads([])
+      } else {
+        setLeads([...data].reverse())
+      }
     } catch (err) {
+      setKvError('Impossible de joindre l\'API. Vérifiez la connexion Vercel KV.')
       console.error('Impossible de charger les leads', err)
     } finally {
       setLoading(false)
@@ -359,6 +367,33 @@ function Dashboard({ onLogout }) {
               </button>
             </div>
           </div>
+
+          {/* Erreur KV */}
+          {kvError && (
+            <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/08 p-5"
+              style={{ background: 'rgba(239,68,68,0.07)' }}>
+              <div className="flex items-start gap-3">
+                <span className="text-xl shrink-0">⚠️</span>
+                <div>
+                  <p className="font-semibold text-red-400 text-sm mb-1">Connexion base de données perdue</p>
+                  <p className="text-text-muted text-xs leading-relaxed mb-3">{kvError}</p>
+                  <p className="text-text-faint text-xs leading-relaxed">
+                    <strong className="text-text-muted">Comment réparer :</strong> allez sur{' '}
+                    <span className="text-brand-cyan font-mono">vercel.com → votre projet → Storage</span>{' '}
+                    et vérifiez que le KV (Upstash) est bien connecté. Si déconnecté, reconnectez-le
+                    et redéployez. Les variables d'env <span className="font-mono">KV_REST_API_URL</span> et{' '}
+                    <span className="font-mono">KV_REST_API_TOKEN</span> doivent être présentes.
+                  </p>
+                  <button
+                    onClick={fetchLeads}
+                    className="mt-3 text-xs text-brand-cyan border border-brand-cyan/30 px-3 py-1.5 rounded-lg hover:bg-brand-cyan/10 transition-colors"
+                  >
+                    ↻ Réessayer
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
