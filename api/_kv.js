@@ -1,10 +1,41 @@
-import { createClient } from '@vercel/kv'
+const BASE_URL = (
+  process.env.STORAGE_KV_REST_API_URL ||
+  process.env.KV_REST_API_URL ||
+  ''
+).replace(/\/$/, '')
 
-const url   = process.env.STORAGE_KV_REST_API_URL   || process.env.KV_REST_API_URL
-const token = process.env.STORAGE_KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN
+const TOKEN =
+  process.env.STORAGE_KV_REST_API_TOKEN ||
+  process.env.KV_REST_API_TOKEN ||
+  ''
 
-if (!url || !token) {
-  console.warn('⚠️  KV env vars manquants (KV_REST_API_URL / STORAGE_KV_REST_API_URL)')
+async function cmd(...args) {
+  const res = await fetch(BASE_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(args),
+  })
+  if (!res.ok) throw new Error(`Upstash HTTP ${res.status}`)
+  const data = await res.json()
+  if (data.error) throw new Error(data.error)
+  return data.result
 }
 
-export const kv = createClient({ url, token })
+export const kv = {
+  ping: () => cmd('PING'),
+
+  get: async (key) => {
+    const result = await cmd('GET', key)
+    if (result === null) return null
+    try { return JSON.parse(result) } catch { return result }
+  },
+
+  set: (key, value) => cmd('SET', key, JSON.stringify(value)),
+
+  del: (key) => cmd('DEL', key),
+
+  keys: (pattern) => cmd('KEYS', pattern),
+}
