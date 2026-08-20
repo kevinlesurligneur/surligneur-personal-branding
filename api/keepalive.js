@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv'
+import { kv } from './_kv.js'
 
 /**
  * Cron Vercel — déclenché quotidiennement (voir vercel.json).

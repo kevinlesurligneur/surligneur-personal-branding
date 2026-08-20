@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv'
+import { kv } from '../_kv.js'
 
 const LIST_KEY = 'surligneur_leads'
 
