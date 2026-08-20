@@ -54,6 +54,16 @@ export default async function handler(req, res) {
         kv.set(`lead_${lead.id}`, lead),
       ])
       console.log(`📥 Nouveau lead : ${lead.firstName} ${lead.lastName} (${lead.email})`)
+
+      // Envoi vers Google Sheets (fire-and-forget)
+      if (process.env.SHEETS_WEBHOOK_URL) {
+        fetch(process.env.SHEETS_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(lead),
+        }).catch(err => console.error('Sheets webhook error:', err.message))
+      }
+
       return res.status(201).json(lead)
     } catch (err) {
       console.error('❌ KV POST error:', err.message)
