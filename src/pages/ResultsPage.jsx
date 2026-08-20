@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useLocation, useNavigate, Link } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { toPng } from 'html-to-image'
 import confetti from 'canvas-confetti'
@@ -235,9 +235,23 @@ function ExampleAvatar({ ex, arc }) {
 export default function ResultsPage() {
   const { state } = useLocation()
   const navigate = useNavigate()
-  // Auto-select client gender when coming from admin
+  const [searchParams] = useSearchParams()
+
+  // Resolve scores + profileId from navigation state (in-app) OR URL params (email link)
+  const urlProfile = searchParams.get('profile')
+  const hasUrlParams = !!urlProfile
+  const resolvedScores = state?.scores || (hasUrlParams ? {
+    E: parseInt(searchParams.get('E') || '0'),
+    G: parseInt(searchParams.get('G') || '0'),
+    L: parseInt(searchParams.get('L') || '0'),
+    X: parseInt(searchParams.get('X') || '0'),
+  } : null)
+  const resolvedProfileId = state?.profileId || urlProfile
+
+  // Auto-select client gender when coming from admin or email link
   const [gender, setGender] = useState(() => {
     if (state?.leadGender === 'femme') return 'feminine'
+    if (searchParams.get('g') === 'femme') return 'feminine'
     return 'masculine'
   })
   const [analysis, setAnalysis] = useState(null)
@@ -248,13 +262,13 @@ export default function ResultsPage() {
   const shareCardRef = useRef(null)
 
   useEffect(() => {
-    if (!state?.scores || !state?.profileId) {
+    if (!resolvedScores || !resolvedProfileId) {
       navigate('/test', { replace: true })
     }
-  }, [state, navigate])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const scores = state?.scores || { E: 0, G: 0, L: 0, X: 0 }
-  const profileId = state?.profileId || 'sniper'
+  const scores = resolvedScores || { E: 0, G: 0, L: 0, X: 0 }
+  const profileId = resolvedProfileId || 'sniper'
   const total = Object.values(scores).reduce((a, b) => a + b, 0)
   const profile = getProfile(profileId, gender)
 
@@ -293,7 +307,7 @@ export default function ResultsPage() {
     return () => clearTimeout(t)
   }, [profileId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!state?.scores || !profile) return null
+  if (!resolvedScores || !profile) return null
 
   const majorArc = ARCHETYPES[profile.major]
   const minorArc = ARCHETYPES[profile.minor]
