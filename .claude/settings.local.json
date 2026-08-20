@@ -75,7 +75,9 @@
       "Bash(npx vercel *)",
       "Bash(git commit *)",
       "Bash(curl -s \"https://surligneur-personal-branding.vercel.app/api/health\")",
-      "Bash(curl -s \"https://surligneur-personal-branding.vercel.app/api/leads\")"
+      "Bash(curl -s \"https://surligneur-personal-branding.vercel.app/api/leads\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://set-octopus-169508.upstash.io\")",
+      "Bash(curl -s \"https://set-octopus-169508.upstash.io/ping\" -H \"Authorization: Bearer gQAAAAAAApYkAAIgcDJjYjc2MDI5ZWYyYjg0NGNhYTQwMDMwMDZiZTk3NTY0MA\")"
     ]
   },
   "hooks": {
