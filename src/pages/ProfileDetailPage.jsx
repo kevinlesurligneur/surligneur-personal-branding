@@ -1,35 +1,90 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Header } from '../components/layout/Header'
 import { Footer } from '../components/layout/Footer'
 import { ProfileIllustration } from '../components/home/ProfileIllustration'
-import { ExamplesAvatars } from '../components/home/ExamplesAvatars'
 import { getProfile, ARCHETYPES } from '../data/profiles'
+import { PROFILE_ANALYSIS } from '../data/profileAnalysis'
+import { EXAMPLE_BIOS } from '../data/exampleBios'
 
-const tagColors = {
-  expert: '#93C5FD',
-  'grande-gueule': '#FCA5A5',
-  leader: '#FCD34D',
-  explorateur: '#6EE7B7',
+function Section({ delay = 0, children, className = '' }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
 }
 
-const tagBg = {
-  expert: 'rgba(59,130,246,0.1)',
-  'grande-gueule': 'rgba(239,68,68,0.1)',
-  leader: 'rgba(245,158,11,0.1)',
-  explorateur: 'rgba(16,185,129,0.1)',
+function SectionHeading({ icon, label, color }) {
+  return (
+    <h2 className="font-display font-bold text-xl text-text-primary flex items-center gap-2 mb-4">
+      <span>{icon}</span>
+      <span style={color ? { color } : {}}>{label}</span>
+    </h2>
+  )
+}
+
+function Card({ children, className = '' }) {
+  return (
+    <div className={`bg-bg-card border border-border-subtle rounded-2xl p-6 ${className}`}>
+      {children}
+    </div>
+  )
+}
+
+function ExampleCard({ ex, arcColor, arcTextColor }) {
+  const [imgError, setImgError] = useState(false)
+  const showImg = ex.avatar && !imgError
+  const bio = EXAMPLE_BIOS[ex.name]
+
+  return (
+    <Card className="flex flex-col items-center text-center gap-3">
+      {showImg ? (
+        <img
+          src={ex.avatar}
+          alt={ex.name}
+          onError={() => setImgError(true)}
+          className="w-16 h-16 rounded-full object-cover object-top border-2 flex-shrink-0"
+          style={{ borderColor: `${arcColor}44` }}
+        />
+      ) : (
+        <div
+          className="w-16 h-16 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+          style={{ background: `linear-gradient(135deg, ${arcColor}cc, ${arcColor}55)` }}
+        >
+          {ex.initials}
+        </div>
+      )}
+      <div>
+        <p className="font-semibold text-sm mb-1" style={{ color: arcTextColor }}>{ex.name}</p>
+        {bio && (
+          <p className="text-text-faint text-xs leading-relaxed">{bio}</p>
+        )}
+      </div>
+    </Card>
+  )
 }
 
 export default function ProfileDetailPage() {
   const { id } = useParams()
-  const profile = getProfile(id)
+  const [gender, setGender] = useState('masculine')
+  const profile = getProfile(id, gender)
+  const analysis = PROFILE_ANALYSIS[id]
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-bg-primary flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-bg-primary flex flex-col">
         <Header />
-        <p className="text-text-muted">Profil introuvable.</p>
-        <Link to="/" className="mt-4 text-brand-cyan hover:underline">← Retour à l'accueil</Link>
+        <div className="flex-1 flex flex-col items-center justify-center gap-4">
+          <p className="text-text-muted">Profil introuvable.</p>
+          <Link to="/" className="text-brand-cyan hover:underline text-sm">← Retour à l'accueil</Link>
+        </div>
       </div>
     )
   }
@@ -42,115 +97,195 @@ export default function ProfileDetailPage() {
       <Header />
 
       <main className="pt-28 pb-20 px-6">
-        <div className="max-w-3xl mx-auto">
-          {/* Back */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-            <Link to="/" className="inline-flex items-center gap-2 text-text-muted hover:text-brand-cyan transition-colors text-sm mb-10">
+        <div className="max-w-2xl mx-auto">
+
+          {/* Back + gender toggle */}
+          <Section delay={0} className="flex items-center justify-between mb-10">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 text-text-muted hover:text-brand-cyan transition-colors text-sm"
+            >
               ← Tous les profils
             </Link>
-          </motion.div>
-
-          {/* Hero card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="rounded-3xl border border-border-subtle bg-bg-card overflow-hidden mb-8"
-            style={{ borderTopColor: major?.color }}
-          >
-            <div className="h-0.5" style={{ background: `linear-gradient(90deg, ${major?.color}80, ${major?.color}20)` }} />
-            <div className="p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
-              <ProfileIllustration majorId={profile.major} emoji={profile.emoji} size="lg" />
-              <div className="flex-1 text-center md:text-left">
-                <h1 className="font-display font-extrabold text-4xl text-text-primary mb-3">{profile.name}</h1>
-                <span
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-full mb-4"
-                  style={{ color: tagColors[profile.major], border: `1px solid ${tagColors[profile.major]}40`, background: tagBg[profile.major] }}
+            <div className="inline-flex items-center gap-1 bg-bg-card border border-border-subtle rounded-full p-1">
+              {[['masculine', '♂'], ['feminine', '♀']].map(([val, icon]) => (
+                <button
+                  key={val}
+                  onClick={() => setGender(val)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all duration-200 ${
+                    gender === val ? 'bg-brand-cyan text-bg-primary' : 'text-text-muted hover:text-text-primary'
+                  }`}
                 >
-                  🎯 {major?.label} (majeur) – {minor?.labelShort || minor?.label} (mineur)
-                </span>
-                <blockquote
-                  className="text-text-muted italic leading-relaxed text-base"
-                  style={{ borderLeft: `3px solid ${major?.color}60`, paddingLeft: '1rem' }}
-                >
-                  "{profile.quote}"
-                </blockquote>
-              </div>
+                  {icon} {val === 'masculine' ? 'Masculin' : 'Féminin'}
+                </button>
+              ))}
             </div>
-          </motion.div>
+          </Section>
 
-          {/* Detail sections */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-            {[
-              { icon: '⚡', label: 'Super-pouvoir', value: profile.superpower },
-              { icon: '⚠️', label: 'Point de vigilance', value: profile.vigilance },
-              { icon: '✍️', label: 'Style de contenu', value: profile.contentStyle },
-            ].map(({ icon, label, value }) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="rounded-2xl border border-border-subtle bg-bg-card p-5"
+          {/* Hero */}
+          <Section delay={0.05} className="text-center mb-8">
+            <div className="flex justify-center mb-6">
+              <ProfileIllustration majorId={profile.major} emoji={profile.emoji} size="lg" />
+            </div>
+            <h1 className="font-display font-extrabold text-4xl md:text-5xl text-text-primary mb-4 leading-tight">
+              {profile.name}
+            </h1>
+            <div className="flex flex-wrap justify-center gap-2 mb-4">
+              <span
+                className="text-sm font-semibold px-3 py-1.5 rounded-full border"
+                style={{ color: major?.textColor, borderColor: major?.borderColor, background: major?.colorBg }}
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <span>{icon}</span>
-                  <h3 className="font-display font-semibold text-sm text-text-muted uppercase tracking-wider">{label}</h3>
-                </div>
-                <p className="text-text-primary text-sm leading-relaxed">{value}</p>
-              </motion.div>
-            ))}
+                {major?.icon} {major?.labelShort || major?.label} (majeur)
+              </span>
+              <span
+                className="text-sm font-semibold px-3 py-1.5 rounded-full border"
+                style={{ color: minor?.textColor, borderColor: minor?.borderColor, background: minor?.colorBg }}
+              >
+                {minor?.icon} {minor?.labelShort || minor?.label} (mineur)
+              </span>
+            </div>
+            <p className="text-text-faint text-sm">{profile.tagline}</p>
+          </Section>
 
-            {/* Keywords */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="rounded-2xl border border-border-subtle bg-bg-card p-5"
+          {/* Quote */}
+          <Section delay={0.1} className="mb-6">
+            <div
+              className="rounded-2xl p-5 border"
+              style={{ background: `${major?.colorBg}88`, borderColor: major?.borderColor }}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span>🏷️</span>
-                <h3 className="font-display font-semibold text-sm text-text-muted uppercase tracking-wider">Mots-clés</h3>
+              <p className="text-text-primary text-base leading-relaxed italic">
+                <span className="text-lg mr-2">⏱️</span>
+                "{profile.quote}"
+              </p>
+            </div>
+          </Section>
+
+          {/* Motivation */}
+          {analysis?.motivation && (
+            <Section delay={0.13} className="mb-6">
+              <Card>
+                <SectionHeading icon="📌" label="Ce qui te motive" color={major?.color} />
+                <p className="text-text-muted text-sm leading-relaxed">{analysis.motivation}</p>
+              </Card>
+            </Section>
+          )}
+
+          {/* Style de contenu */}
+          <Section delay={0.16} className="mb-6">
+            <Card>
+              <SectionHeading icon="✍️" label="Ton style de contenu" color={major?.color} />
+              <p className="text-text-muted text-sm leading-relaxed mb-3">{profile.description}</p>
+              <p className="text-text-muted text-sm leading-relaxed">{profile.contentStyle}</p>
+              {profile.keywords?.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border-subtle">
+                  {profile.keywords.map(kw => (
+                    <span
+                      key={kw}
+                      className="text-xs font-medium px-3 py-1 rounded-full border"
+                      style={{ color: major?.textColor, borderColor: major?.borderColor, background: major?.colorBg }}
+                    >
+                      {kw}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </Section>
+
+          {/* Forces + Limites */}
+          {analysis && (analysis.forces?.length > 0 || analysis.limites?.length > 0) && (
+            <Section delay={0.19} className="mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {analysis.forces?.length > 0 && (
+                  <Card>
+                    <SectionHeading icon="💡" label="Tes forces" />
+                    <ul className="space-y-3">
+                      {analysis.forces.map((f, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <span className="text-green-400 text-xs mt-0.5 flex-shrink-0">✅</span>
+                          <span className="text-text-muted text-sm leading-relaxed">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                )}
+                {analysis.limites?.length > 0 && (
+                  <Card>
+                    <SectionHeading icon="⚡" label="Tes limites" />
+                    <ul className="space-y-3">
+                      {analysis.limites.map((l, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <span className="text-yellow-400 text-xs mt-0.5 flex-shrink-0">⚡</span>
+                          <span className="text-text-muted text-sm leading-relaxed">{l}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                )}
               </div>
-              <div className="flex flex-wrap gap-2">
-                {profile.keywords.map(kw => (
-                  <span
-                    key={kw}
-                    className="text-xs font-medium px-3 py-1.5 rounded-full"
-                    style={{ color: tagColors[profile.major], background: tagBg[profile.major], border: `1px solid ${tagColors[profile.major]}30` }}
-                  >
-                    {kw}
-                  </span>
+            </Section>
+          )}
+
+          {/* Blocage */}
+          {analysis?.blocage && (
+            <Section delay={0.22} className="mb-6">
+              <Card>
+                <SectionHeading icon="🚧" label="Ce qui te bloque" color={major?.color} />
+                <p className="text-text-muted text-sm leading-relaxed">{analysis.blocage}</p>
+              </Card>
+            </Section>
+          )}
+
+          {/* Conseils */}
+          {analysis?.conseils?.length > 0 && (
+            <Section delay={0.25} className="mb-6">
+              <Card>
+                <SectionHeading icon="🚀" label="Conseils pour passer au niveau supérieur" color={major?.color} />
+                <ul className="space-y-3">
+                  {analysis.conseils.map((c, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="text-brand-cyan text-xs mt-0.5 flex-shrink-0">💡</span>
+                      <span className="text-text-muted text-sm leading-relaxed">{c}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            </Section>
+          )}
+
+          {/* Personnalités célèbres */}
+          {profile.examples?.length > 0 && (
+            <Section delay={0.28} className="mb-10">
+              <SectionHeading icon="⭐" label="Personnalités célèbres de ce type" />
+              <div className="grid grid-cols-2 gap-4">
+                {profile.examples.map((ex, i) => (
+                  <ExampleCard
+                    key={i}
+                    ex={ex}
+                    arcColor={major?.color}
+                    arcTextColor={major?.textColor}
+                  />
                 ))}
               </div>
-            </motion.div>
-          </div>
+            </Section>
+          )}
 
-          {/* Examples */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="rounded-2xl border border-border-subtle bg-bg-card p-6 mb-8"
-          >
-            <ExamplesAvatars examples={profile.examples} />
-          </motion.div>
-
-          {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="text-center"
-          >
-            <p className="text-text-muted mb-5">Ce profil te ressemble ? Passe le test pour confirmer.</p>
+          {/* CTAs */}
+          <Section delay={0.3} className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/test"
-              className="btn-primary inline-flex"
+              className="btn-primary justify-center py-3.5 px-8"
             >
               🎯 Passer le test de personnalité
             </Link>
-          </motion.div>
+            <Link
+              to="/"
+              className="btn-ghost justify-center py-3.5 px-8"
+            >
+              Voir tous les profils
+            </Link>
+          </Section>
+
         </div>
       </main>
 
