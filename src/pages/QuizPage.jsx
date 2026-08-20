@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Header } from '../components/layout/Header'
 import { QUESTIONS, calculateScores, getProfileFromScores } from '../data/quiz'
 
-function AnswerOption({ answer, selected, disabled, onToggle }) {
+function AnswerOption({ answer, selected, disabled, selectedCount, onToggle }) {
+  const points = selected ? (selectedCount === 1 ? 2 : 1) : null
+
   return (
     <motion.button
       whileTap={!disabled ? { scale: 0.99 } : {}}
@@ -27,7 +29,19 @@ function AnswerOption({ answer, selected, disabled, onToggle }) {
       `}>
         {answer.letter}
       </span>
-      <span className="text-sm leading-relaxed">{answer.text}</span>
+      <span className="flex flex-col">
+        <span className="text-sm leading-relaxed">{answer.text}</span>
+        {points !== null && (
+          <motion.span
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.15 }}
+            className="text-xs text-brand-cyan/80 mt-0.5"
+          >
+            ({points} {points === 1 ? 'point' : 'points'})
+          </motion.span>
+        )}
+      </span>
     </motion.button>
   )
 }
@@ -121,6 +135,7 @@ export default function QuizPage() {
                       answer={answer}
                       selected={currentAnswers.includes(answer.letter)}
                       disabled={currentAnswers.length >= 2 && !currentAnswers.includes(answer.letter)}
+                      selectedCount={currentAnswers.length}
                       onToggle={() => toggleAnswer(answer.letter)}
                     />
                   ))}
