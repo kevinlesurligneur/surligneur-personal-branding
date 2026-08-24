@@ -10,6 +10,7 @@ export default function LeadFormPage() {
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
     gender: '',
     socialMedia: '',
   })
@@ -43,6 +44,7 @@ export default function LeadFormPage() {
       firstName: form.firstName,
       lastName: form.lastName,
       email: form.email,
+      phone: form.phone || undefined,
       gender: form.gender,
       socialMedia: form.socialMedia,
       profile: state.profileId,
@@ -135,6 +137,21 @@ export default function LeadFormPage() {
                   value={form.email}
                   onChange={handleChange('email')}
                   placeholder="marie@exemple.fr"
+                  className="w-full bg-bg-primary border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-faint focus:outline-none focus:border-brand-cyan/60 transition-colors"
+                />
+              </div>
+
+              {/* Téléphone (facultatif) */}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-text-muted mb-1.5">
+                  Téléphone <span className="text-text-faint text-xs">(facultatif)</span>
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={form.phone}
+                  onChange={handleChange('phone')}
+                  placeholder="+33 6 00 00 00 00"
                   className="w-full bg-bg-primary border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-faint focus:outline-none focus:border-brand-cyan/60 transition-colors"
                 />
               </div>

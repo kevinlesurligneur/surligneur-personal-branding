@@ -114,8 +114,8 @@ function buildEmailHtml(lead, profile, archetype) {
 
   <!-- Footer -->
   <div style="background:#0D1224;border-radius:0 0 16px 16px;border-top:1px solid rgba(255,255,255,0.05);padding:20px 36px;text-align:center;">
-    <p style="margin:0 0 4px;color:rgba(255,255,255,0.35);font-size:12px;">Une question ? Je suis là.</p>
     <p style="margin:0 0 8px;color:rgba(255,255,255,0.5);font-weight:600;font-size:13px;">Kevin — Responsable du développement</p>
+    <p style="margin:0 0 6px;color:rgba(255,255,255,0.35);font-size:12px;">Pour toute demande d'informations, vous pouvez me contacter sur</p>
     <a href="mailto:kevinc@lecrayongroupe.fr" style="color:#00D4F5;text-decoration:none;font-size:13px;font-weight:600;">kevinc@lecrayongroupe.fr</a>
     <br/><br/>
     <a href="https://www.lecrayongroupe.fr/le-surligneur" style="color:rgba(255,255,255,0.25);text-decoration:none;font-size:11px;">lecrayongroupe.fr/le-surligneur</a>
