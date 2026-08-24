@@ -137,7 +137,7 @@ async function sendResultEmail(lead) {
   const archetype = ARCHETYPES[profile.major]
   const html = buildEmailHtml(lead, profile, archetype)
 
-  const from = process.env.RESEND_FROM_EMAIL || 'Le Surligneur <onboarding@resend.dev>'
+  const from = process.env.RESEND_FROM_EMAIL || 'Le Surligneur <kevinchalambert@crayongroupe.fr>'
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
