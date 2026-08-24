@@ -32,16 +32,17 @@ export function HeroSection() {
       />
 
       {/* ── Titre ── */}
-      <h1 className="relative z-10 font-display font-bold max-w-3xl leading-tight mb-6">
-        <span className="block text-lg md:text-xl text-text-muted font-medium tracking-wide mb-2">Les</span>
+      <h1 className="relative z-10 font-display font-bold text-3xl md:text-4xl lg:text-5xl max-w-2xl leading-[1.35] mb-6">
+        <span className="inline-block mr-[0.25em]">Les</span>
         <span
-          className="block text-5xl md:text-7xl lg:text-8xl bg-clip-text text-transparent mb-2"
+          className="inline-block mr-[0.25em] bg-clip-text text-transparent"
           style={{ backgroundImage: 'linear-gradient(135deg, #00D4F5, #7DD3FC)' }}
         >
           12 Personnalités
         </span>
-        <span className="block text-2xl md:text-3xl lg:text-4xl text-text-primary">
-          du <HighlightWord color="rgba(0,212,245,0.22)" delay={0.5}>Personal Branding</HighlightWord>
+        <span className="inline-block mr-[0.25em]">du</span>
+        <span className="inline-block">
+          <HighlightWord color="rgba(0,212,245,0.22)" delay={0.5}>Personal Branding</HighlightWord>
         </span>
       </h1>
 
