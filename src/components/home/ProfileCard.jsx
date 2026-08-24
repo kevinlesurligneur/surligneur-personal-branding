@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ARCHETYPES } from '../../data/profiles'
 import { ProfileIllustration } from './ProfileIllustration'
@@ -12,17 +12,10 @@ const archetypeTagStyles = {
 }
 
 const archetypeBorderHover = {
-  expert: 'rgba(59,130,246,0.6)',
-  'grande-gueule': 'rgba(239,68,68,0.6)',
-  leader: 'rgba(245,158,11,0.6)',
-  explorateur: 'rgba(16,185,129,0.6)',
-}
-
-const archetypeGlowHover = {
-  expert: '0 16px 56px rgba(59,130,246,0.22), 0 0 0 1px rgba(59,130,246,0.6)',
-  'grande-gueule': '0 16px 56px rgba(239,68,68,0.22), 0 0 0 1px rgba(239,68,68,0.6)',
-  leader: '0 16px 56px rgba(245,158,11,0.22), 0 0 0 1px rgba(245,158,11,0.6)',
-  explorateur: '0 16px 56px rgba(16,185,129,0.22), 0 0 0 1px rgba(16,185,129,0.6)',
+  expert: 'rgba(59,130,246,0.5)',
+  'grande-gueule': 'rgba(239,68,68,0.5)',
+  leader: 'rgba(245,158,11,0.5)',
+  explorateur: 'rgba(16,185,129,0.5)',
 }
 
 export function ProfileCard({ profile, index = 0 }) {
@@ -32,42 +25,12 @@ export function ProfileCard({ profile, index = 0 }) {
 
   const tagStyle = archetypeTagStyles[profile.major]
 
-  /* ── 3D tilt ─────────────────────────────────────────────── */
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-  const springCfg = { stiffness: 200, damping: 22, mass: 0.5 }
-  const springX   = useSpring(mouseX, springCfg)
-  const springY   = useSpring(mouseY, springCfg)
-  const rotateY   = useTransform(springX, [-0.5, 0.5], [12, -12])
-  const rotateX   = useTransform(springY, [-0.5, 0.5], [-8,   8])
-
-  /* ── Glare overlay ───────────────────────────────────────── */
-  const glareOpacity = useMotionValue(0)
-  const springGlare  = useSpring(glareOpacity, { stiffness: 300, damping: 25 })
-  const glareBg      = useTransform([springX, springY], ([x, y]) => {
-    const gx = Math.round((x + 0.5) * 100)
-    const gy = Math.round((y + 0.5) * 100)
-    return `radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.11) 0%, transparent 65%)`
-  })
-
-  function handleMouseMove(e) {
-    const rect = e.currentTarget.getBoundingClientRect()
-    mouseX.set((e.clientX - rect.left) / rect.width  - 0.5)
-    mouseY.set((e.clientY - rect.top)  / rect.height - 0.5)
-  }
-
   function handleMouseEnter(e) {
-    glareOpacity.set(1)
     e.currentTarget.style.borderColor = archetypeBorderHover[profile.major]
-    e.currentTarget.style.boxShadow   = archetypeGlowHover[profile.major]
   }
 
   function handleMouseLeave(e) {
-    mouseX.set(0)
-    mouseY.set(0)
-    glareOpacity.set(0)
     e.currentTarget.style.borderColor = 'var(--border-subtle)'
-    e.currentTarget.style.boxShadow   = 'none'
   }
 
   return (
@@ -76,32 +39,16 @@ export function ProfileCard({ profile, index = 0 }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.55, delay: index * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
-      whileHover={{ y: -10, scale: 1.02 }}
+      whileHover={{ y: -4 }}
       className="group relative flex flex-col rounded-3xl overflow-hidden"
       style={{
         background: 'var(--bg-card)',
         border: '1px solid var(--border-subtle)',
-        transition: 'border-color 0.35s ease, box-shadow 0.35s ease',
-        willChange: 'transform',
-        rotateX,
-        rotateY,
-        transformPerspective: 900,
+        transition: 'border-color 0.3s ease',
       }}
-      onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Glare */}
-      <motion.div
-        style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          borderRadius: 'inherit',
-          background: glareBg,
-          opacity: springGlare,
-          zIndex: 2,
-        }}
-      />
-
       {/* Top accent line */}
       <div
         className="h-0.5 w-full"
