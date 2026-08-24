@@ -21,10 +21,20 @@ function Section({ delay = 0, children, className = '' }) {
   )
 }
 
-function SectionHeading({ icon, label, color }) {
+const ICONS = {
+  motive: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>,
+  style: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"/></svg>,
+  forces: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>,
+  limites: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>,
+  blocage: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg>,
+  conseils: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"/></svg>,
+  exemples: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/></svg>,
+}
+
+function SectionHeading({ iconName, label, color }) {
   return (
-    <h2 className="font-display font-bold text-xl text-text-primary flex items-center gap-2 mb-4">
-      <span>{icon}</span>
+    <h2 className="font-display font-bold text-xl text-text-primary flex items-center gap-2.5 mb-4">
+      <span style={{ color: color || 'rgba(255,255,255,0.35)' }}>{ICONS[iconName]}</span>
       <span style={color ? { color } : {}}>{label}</span>
     </h2>
   )
@@ -150,11 +160,10 @@ export default function ProfileDetailPage() {
           {/* Quote */}
           <Section delay={0.1} className="mb-6">
             <div
-              className="rounded-2xl p-5 border"
-              style={{ background: `${major?.colorBg}88`, borderColor: major?.borderColor }}
+              className="rounded-2xl px-6 py-5 border-l-4"
+              style={{ borderLeftColor: major?.color, background: `${major?.colorBg}55` }}
             >
               <p className="text-text-primary text-base leading-relaxed italic">
-                <span className="text-lg mr-2">⏱️</span>
                 "{profile.quote}"
               </p>
             </div>
@@ -164,7 +173,7 @@ export default function ProfileDetailPage() {
           {analysis?.motivation && (
             <Section delay={0.13} className="mb-6">
               <Card>
-                <SectionHeading icon="📌" label="Ce qui te motive" color={major?.color} />
+                <SectionHeading iconName="motive" label="Ce qui te motive" color={major?.color} />
                 <p className="text-text-muted text-sm leading-relaxed">{analysis.motivation}</p>
               </Card>
             </Section>
@@ -173,7 +182,7 @@ export default function ProfileDetailPage() {
           {/* Style de contenu */}
           <Section delay={0.16} className="mb-6">
             <Card>
-              <SectionHeading icon="✍️" label="Ton style de contenu" color={major?.color} />
+              <SectionHeading iconName="style" label="Ton style de contenu" color={major?.color} />
               <p className="text-text-muted text-sm leading-relaxed mb-3">{profile.description}</p>
               <p className="text-text-muted text-sm leading-relaxed">{profile.contentStyle}</p>
               {profile.keywords?.length > 0 && (
@@ -198,11 +207,11 @@ export default function ProfileDetailPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {analysis.forces?.length > 0 && (
                   <Card>
-                    <SectionHeading icon="💡" label="Tes forces" />
+                    <SectionHeading iconName="forces" label="Tes forces" color="rgba(74,222,128,0.8)" />
                     <ul className="space-y-3">
                       {analysis.forces.map((f, i) => (
                         <li key={i} className="flex items-start gap-2.5">
-                          <span className="text-green-400 text-xs mt-0.5 flex-shrink-0">✅</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(74,222,128)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-shrink-0"><path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                           <span className="text-text-muted text-sm leading-relaxed">{f}</span>
                         </li>
                       ))}
@@ -211,11 +220,11 @@ export default function ProfileDetailPage() {
                 )}
                 {analysis.limites?.length > 0 && (
                   <Card>
-                    <SectionHeading icon="⚡" label="Tes limites" />
+                    <SectionHeading iconName="limites" label="Tes limites" color="rgba(251,191,36,0.8)" />
                     <ul className="space-y-3">
                       {analysis.limites.map((l, i) => (
                         <li key={i} className="flex items-start gap-2.5">
-                          <span className="text-yellow-400 text-xs mt-0.5 flex-shrink-0">⚡</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgb(251,191,36)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-shrink-0"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg>
                           <span className="text-text-muted text-sm leading-relaxed">{l}</span>
                         </li>
                       ))}
@@ -230,7 +239,7 @@ export default function ProfileDetailPage() {
           {analysis?.blocage && (
             <Section delay={0.22} className="mb-6">
               <Card>
-                <SectionHeading icon="🚧" label="Ce qui te bloque" color={major?.color} />
+                <SectionHeading iconName="blocage" label="Ce qui te bloque" color={major?.color} />
                 <p className="text-text-muted text-sm leading-relaxed">{analysis.blocage}</p>
               </Card>
             </Section>
@@ -240,11 +249,11 @@ export default function ProfileDetailPage() {
           {analysis?.conseils?.length > 0 && (
             <Section delay={0.25} className="mb-6">
               <Card>
-                <SectionHeading icon="🚀" label="Conseils pour passer au niveau supérieur" color={major?.color} />
+                <SectionHeading iconName="conseils" label="Conseils pour passer au niveau supérieur" color={major?.color} />
                 <ul className="space-y-3">
                   {analysis.conseils.map((c, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <span className="text-brand-cyan text-xs mt-0.5 flex-shrink-0">💡</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,212,245,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-shrink-0"><path d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"/></svg>
                       <span className="text-text-muted text-sm leading-relaxed">{c}</span>
                     </li>
                   ))}
@@ -256,7 +265,7 @@ export default function ProfileDetailPage() {
           {/* Personnalités célèbres */}
           {profile.examples?.length > 0 && (
             <Section delay={0.28} className="mb-10">
-              <SectionHeading icon="⭐" label="Personnalités célèbres de ce type" />
+              <SectionHeading iconName="exemples" label="Personnalités célèbres de ce type" />
               <div className="grid grid-cols-2 gap-4">
                 {profile.examples.map((ex, i) => (
                   <ExampleCard

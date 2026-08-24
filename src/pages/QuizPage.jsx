@@ -4,44 +4,34 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Header } from '../components/layout/Header'
 import { QUESTIONS, calculateScores, getProfileFromScores } from '../data/quiz'
 
-function AnswerOption({ answer, selected, disabled, selectedCount, onToggle }) {
-  const points = selected ? (selectedCount === 1 ? 2 : 1) : null
-
+function AnswerOption({ answer, selected, disabled, onToggle }) {
   return (
     <motion.button
-      whileTap={!disabled ? { scale: 0.99 } : {}}
+      whileTap={!disabled ? { scale: 0.995 } : {}}
       onClick={onToggle}
       disabled={disabled}
       className={`
-        w-full text-left flex items-start gap-3 px-5 py-4 rounded-2xl border transition-all duration-150
+        w-full text-left px-5 py-4 rounded-xl border-l-2 transition-all duration-150
         ${selected
-          ? 'border-brand-cyan bg-brand-cyan/10 text-text-primary'
+          ? 'border-l-brand-cyan bg-white/[0.04] text-text-primary'
           : disabled
-          ? 'border-border-subtle bg-bg-card/20 text-text-faint cursor-not-allowed opacity-40'
-          : 'border-border-subtle bg-bg-card hover:border-brand-cyan/40 hover:bg-bg-card text-text-muted cursor-pointer'
+          ? 'border-l-transparent bg-transparent text-text-faint cursor-not-allowed opacity-30'
+          : 'border-l-transparent bg-bg-card hover:bg-white/[0.04] hover:border-l-white/20 text-text-muted cursor-pointer'
         }
       `}
     >
-      <span className={`
-        w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-xs font-bold font-display mt-0.5
-        ${selected ? 'bg-brand-cyan text-bg-primary' : 'bg-border-subtle/60 text-text-muted'}
-        transition-all duration-150
-      `}>
-        {answer.letter}
-      </span>
-      <span className="flex flex-col">
-        <span className="text-sm leading-relaxed">{answer.text}</span>
-        {points !== null && (
-          <motion.span
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.15 }}
-            className="text-xs text-brand-cyan/80 mt-0.5"
-          >
-            ({points} {points === 1 ? 'point' : 'points'})
-          </motion.span>
-        )}
-      </span>
+      <span className="text-sm leading-relaxed">{answer.text}</span>
+      {selected && (
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="ml-2 inline-block"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="inline text-brand-cyan">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </motion.span>
+      )}
     </motion.button>
   )
 }
@@ -122,20 +112,16 @@ export default function QuizPage() {
               transition={{ duration: 0.25, ease: 'easeInOut' }}
             >
               <div className="bg-bg-card border border-border-subtle rounded-3xl p-6 md:p-8">
-                <h2 className="font-display font-bold text-xl md:text-2xl text-text-primary mb-1">
+                <h2 className="font-display font-bold text-xl md:text-2xl text-text-primary mb-6">
                   {QUESTIONS[currentQ].question}
                 </h2>
-                <p className="text-text-faint text-sm mb-6">
-                  Tu peux choisir 1 ou 2 réponses par question.
-                </p>
-                <div className="space-y-3">
+                <div className="space-y-1.5">
                   {QUESTIONS[currentQ].answers.map(answer => (
                     <AnswerOption
                       key={answer.letter}
                       answer={answer}
                       selected={currentAnswers.includes(answer.letter)}
                       disabled={currentAnswers.length >= 2 && !currentAnswers.includes(answer.letter)}
-                      selectedCount={currentAnswers.length}
                       onToggle={() => toggleAnswer(answer.letter)}
                     />
                   ))}
