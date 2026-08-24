@@ -32,17 +32,16 @@ export function HeroSection() {
       />
 
       {/* ── Titre ── */}
-      <h1 className="relative z-10 font-display font-bold text-3xl md:text-4xl lg:text-5xl max-w-2xl leading-[1.35] mb-6">
-        <span className="inline-block mr-[0.25em]">Les</span>
+      <h1 className="relative z-10 font-display font-bold max-w-3xl leading-tight mb-6">
+        <span className="block text-lg md:text-xl text-text-muted font-medium tracking-wide mb-2">Les</span>
         <span
-          className="inline-block mr-[0.25em] bg-clip-text text-transparent"
+          className="block text-5xl md:text-7xl lg:text-8xl bg-clip-text text-transparent mb-2"
           style={{ backgroundImage: 'linear-gradient(135deg, #00D4F5, #7DD3FC)' }}
         >
           12 Personnalités
         </span>
-        <span className="inline-block mr-[0.25em]">du</span>
-        <span className="inline-block">
-          <HighlightWord color="rgba(0,212,245,0.22)" delay={0.5}>Personal Branding</HighlightWord>
+        <span className="block text-2xl md:text-3xl lg:text-4xl text-text-primary">
+          du <HighlightWord color="rgba(0,212,245,0.22)" delay={0.5}>Personal Branding</HighlightWord>
         </span>
       </h1>
 
@@ -68,8 +67,7 @@ export function HeroSection() {
           onClick={() => navigate('/test')}
           className="btn-primary text-base md:text-lg px-8 py-4 rounded-2xl"
         >
-          <span>🎯</span>
-          Passer le test de personnalité
+          Passer le test de personnalité →
         </motion.button>
 
         <button
@@ -81,25 +79,15 @@ export function HeroSection() {
       </div>
 
       {/* ── Flèche scroll ── */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1">
-        {[0, 1, 2].map((i) => (
-          <motion.div
-            key={i}
-            animate={{ opacity: [0.2, 1, 0.2], y: [0, 6, 0] }}
-            transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
-          >
-            <svg width="24" height="14" viewBox="0 0 24 14" fill="none">
-              <path
-                d="M2 2L12 11L22 2"
-                stroke="#00D4F5"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </motion.div>
-        ))}
-      </div>
+      <motion.div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
+        animate={{ opacity: [0.3, 0.8, 0.3], y: [0, 8, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <svg width="24" height="14" viewBox="0 0 24 14" fill="none">
+          <path d="M2 2L12 11L22 2" stroke="#00D4F5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </motion.div>
 
     </section>
   )

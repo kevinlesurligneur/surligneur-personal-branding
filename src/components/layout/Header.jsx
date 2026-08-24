@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import logoText from '../../assets/logo-text.png'
 import { useTheme } from '../../contexts/ThemeContext'
 
@@ -31,6 +32,13 @@ export function Header() {
   const navigate    = useNavigate()
   const location    = useLocation()
   const { theme, toggle } = useTheme()
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    function onScroll() { setScrolled(window.scrollY > 80) }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   function handleLogoClick() {
     if (location.pathname === '/') {
@@ -48,15 +56,27 @@ export function Header() {
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-4"
       style={{ background: 'var(--header-bg)', backdropFilter: 'blur(12px)' }}
     >
-      <button onClick={handleLogoClick} className="flex items-center">
-        <img
-          src={logoText}
-          alt="Le Surligneur — accueil"
-          className="h-7 md:h-8 object-contain"
-        />
-      </button>
+      <AnimatePresence>
+        {!scrolled && (
+          <motion.button
+            key="logo"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.2 }}
+            onClick={handleLogoClick}
+            className="flex items-center"
+          >
+            <img
+              src={logoText}
+              alt="Le Surligneur — accueil"
+              className="h-7 md:h-8 object-contain"
+            />
+          </motion.button>
+        )}
+        {scrolled && <div key="spacer" />}
+      </AnimatePresence>
 
-      <nav className="flex items-center gap-2 md:gap-3">
+      <nav className="flex items-center gap-2 md:gap-3 ml-auto">
 
         {/* Toggle lumière / sombre */}
         <motion.button
@@ -81,16 +101,21 @@ export function Header() {
           </motion.span>
         </motion.button>
 
-        {/* CTA — masqué sur mobile */}
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => navigate('/test')}
-          className="hidden md:block text-sm font-semibold bg-brand-cyan text-bg-primary px-4 py-2 rounded-xl hover:shadow-cyan-glow-sm transition-all duration-200"
-          style={{ fontFamily: 'Syne, sans-serif' }}
-        >
-          Passer le test
-        </motion.button>
+        {/* CTA — toujours visible après scroll, sinon masqué sur mobile */}
+        <AnimatePresence>
+          <motion.button
+            key="cta"
+            initial={false}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/test')}
+            className={`text-sm font-semibold bg-brand-cyan text-bg-primary px-4 py-2 rounded-xl hover:shadow-cyan-glow-sm transition-all duration-200 ${scrolled ? 'block' : 'hidden md:block'}`}
+            style={{ fontFamily: 'Syne, sans-serif' }}
+          >
+            Passer le test
+          </motion.button>
+        </AnimatePresence>
       </nav>
     </motion.header>
   )
