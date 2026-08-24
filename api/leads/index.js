@@ -213,17 +213,10 @@ export default async function handler(req, res) {
       ])
       console.log(`📥 Nouveau lead : ${lead.firstName} ${lead.lastName} (${lead.email})`)
 
-      // Email automatique via Resend
-      let emailStatus = 'pending'
-      try {
-        await sendResultEmail(lead)
-        emailStatus = 'sent'
-      } catch (err) {
-        emailStatus = `error: ${err.message}`
-        console.error('Email error:', err.message)
-      }
+      // Email automatique via Resend (fire-and-forget)
+      sendResultEmail(lead).catch(err => console.error('Email error:', err.message))
 
-      return res.status(201).json({ ...lead, _emailStatus: emailStatus })
+      return res.status(201).json(lead)
     } catch (err) {
       console.error('❌ KV POST error:', err.message)
       return res.status(503).json({ error: 'kv_unavailable', message: err.message })
