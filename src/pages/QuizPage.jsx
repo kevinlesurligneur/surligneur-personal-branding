@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Header } from '../components/layout/Header'
 import { QUESTIONS, calculateScores, getProfileFromScores } from '../data/quiz'
 
-function AnswerOption({ answer, selected, disabled, onToggle }) {
+function AnswerOption({ answer, selected, disabled, selectedCount, onToggle }) {
+  const points = selected ? (selectedCount === 1 ? 2 : 1) : null
+
   return (
     <motion.button
       whileTap={!disabled ? { scale: 0.995 } : {}}
@@ -21,15 +23,14 @@ function AnswerOption({ answer, selected, disabled, onToggle }) {
       `}
     >
       <span className="text-sm leading-relaxed">{answer.text}</span>
-      {selected && (
+      {points !== null && (
         <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="ml-2 inline-block"
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.15 }}
+          className="block text-xs text-brand-cyan/70 mt-1"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="inline text-brand-cyan">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
+          {points} {points === 1 ? 'point' : 'points'}
         </motion.span>
       )}
     </motion.button>
@@ -122,6 +123,7 @@ export default function QuizPage() {
                       answer={answer}
                       selected={currentAnswers.includes(answer.letter)}
                       disabled={currentAnswers.length >= 2 && !currentAnswers.includes(answer.letter)}
+                      selectedCount={currentAnswers.length}
                       onToggle={() => toggleAnswer(answer.letter)}
                     />
                   ))}
