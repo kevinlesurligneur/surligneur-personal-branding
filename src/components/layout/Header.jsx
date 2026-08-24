@@ -81,12 +81,12 @@ export function Header() {
           </motion.span>
         </motion.button>
 
-        {/* CTA */}
+        {/* CTA — masqué sur mobile */}
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => navigate('/test')}
-          className="text-sm font-semibold bg-brand-cyan text-bg-primary px-4 py-2 rounded-xl hover:shadow-cyan-glow-sm transition-all duration-200"
+          className="hidden md:block text-sm font-semibold bg-brand-cyan text-bg-primary px-4 py-2 rounded-xl hover:shadow-cyan-glow-sm transition-all duration-200"
           style={{ fontFamily: 'Syne, sans-serif' }}
         >
           Passer le test
