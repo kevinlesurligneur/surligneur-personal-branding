@@ -158,6 +158,57 @@ async function sendResultEmail(lead) {
   console.log(`📧 Email envoyé à ${lead.email} (Resend ID: ${data.id})`)
 }
 
+async function sendNotificationEmail(lead) {
+  const RESEND_KEY = process.env.RESEND_API_KEY
+  if (!RESEND_KEY) return
+
+  const gender = genderKey(lead.gender)
+  const profile = getProfile(lead.profile, gender)
+  const profileName = profile ? `${profile.emoji} ${profile.name}` : lead.profile
+  const from = process.env.RESEND_FROM_EMAIL || 'Le Surligneur <kevinchalambert@crayongroupe.fr>'
+
+  const scores = lead.scores || {}
+  const html = `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#f4f4f4;font-family:Arial,sans-serif;">
+<div style="max-width:480px;margin:0 auto;background:white;border-radius:12px;padding:28px;border:1px solid #e0e0e0;">
+  <p style="margin:0 0 4px;font-size:11px;color:#999;text-transform:uppercase;letter-spacing:2px;">Le Surligneur</p>
+  <h2 style="margin:0 0 20px;font-size:18px;color:#111;">Nouveau test complété</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <tr><td style="padding:6px 0;color:#666;">Prénom</td><td style="padding:6px 0;font-weight:600;color:#111;">${lead.firstName}</td></tr>
+    <tr><td style="padding:6px 0;color:#666;">Nom</td><td style="padding:6px 0;font-weight:600;color:#111;">${lead.lastName}</td></tr>
+    <tr><td style="padding:6px 0;color:#666;">Email</td><td style="padding:6px 0;font-weight:600;color:#111;">${lead.email}</td></tr>
+    <tr><td style="padding:6px 0;color:#666;">Téléphone</td><td style="padding:6px 0;font-weight:600;color:#111;">${lead.phone || '—'}</td></tr>
+    <tr><td style="padding:6px 0;color:#666;">Profil</td><td style="padding:6px 0;font-weight:600;color:#111;">${profileName}</td></tr>
+    <tr><td style="padding:6px 0;color:#666;">Sexe</td><td style="padding:6px 0;color:#111;">${lead.gender}</td></tr>
+    <tr><td style="padding:6px 0;color:#666;">Réseaux sociaux</td><td style="padding:6px 0;color:#111;">${lead.socialMedia}</td></tr>
+    <tr><td style="padding:6px 0;color:#666;">Scores</td><td style="padding:6px 0;color:#111;">E:${scores.E || 0} G:${scores.G || 0} L:${scores.L || 0} X:${scores.X || 0}</td></tr>
+    <tr><td style="padding:6px 0;color:#666;">Date</td><td style="padding:6px 0;color:#111;">${new Date(lead.date).toLocaleString('fr-FR')}</td></tr>
+  </table>
+</div>
+</body>
+</html>`
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${RESEND_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from,
+      to: ['kevinc@lecrayongroupe.fr'],
+      subject: `Nouveau test de personal branding — ${lead.firstName} ${lead.lastName}`,
+      html,
+    }),
+  })
+
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || JSON.stringify(data))
+  console.log(`🔔 Notification envoyée pour ${lead.firstName} ${lead.lastName}`)
+}
+
 const LIST_KEY = 'surligneur_leads'
 
 /** Reconstruit la liste principale depuis les clés individuelles si besoin */
@@ -215,6 +266,7 @@ export default async function handler(req, res) {
 
       // Email automatique via Resend (fire-and-forget)
       sendResultEmail(lead).catch(err => console.error('Email error:', err.message))
+      sendNotificationEmail(lead).catch(err => console.error('Notification error:', err.message))
 
       return res.status(201).json(lead)
     } catch (err) {
