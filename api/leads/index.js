@@ -264,14 +264,12 @@ export default async function handler(req, res) {
       ])
       console.log(`📥 Nouveau lead : ${lead.firstName} ${lead.lastName} (${lead.email})`)
 
-      // Emails via Resend
-      let emailStatus = 'pending', notifStatus = 'pending'
+      // Email de résultat au participant
+      let emailStatus = 'pending'
       try { await sendResultEmail(lead); emailStatus = 'sent' }
       catch (err) { emailStatus = `error: ${err.message}` }
-      try { await sendNotificationEmail(lead); notifStatus = 'sent' }
-      catch (err) { notifStatus = `error: ${err.message}` }
 
-      return res.status(201).json({ ...lead, _emailStatus: emailStatus, _notifStatus: notifStatus })
+      return res.status(201).json({ ...lead, _emailStatus: emailStatus })
     } catch (err) {
       console.error('❌ KV POST error:', err.message)
       return res.status(503).json({ error: 'kv_unavailable', message: err.message })
